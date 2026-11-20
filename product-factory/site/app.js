@@ -264,7 +264,7 @@
     var a=all();if(!searchQ)return a;
     var q=searchQ.toLowerCase();
     return a.filter(function(r){
-      var fields=['产品名称','一句话定位','负责人','目标用户','核心指标','当前阶段'];
+      var fields=['产品名称','一句话定位','当前阶段'];
       for(var i=0;i<fields.length;i++)if(txt(r[fields[i]]).toLowerCase().indexOf(q)>=0)return true;
       return false;
     });
@@ -310,14 +310,11 @@
     var tr=el('div','tagrow');
     var tag=row.当前阶段||'灵感',si=stageInfo(tag);
     var tg=el('span','tag');tg.style.background=si.bg;tg.style.color=si.c;tg.textContent=tag;tr.appendChild(tg);
-    var pn=txt(row.核心指标).match(/P\d/);tr.appendChild(el('span','pnum',pn?pn[0]:''));
     c.appendChild(tr);
     var ttl=el('div','ttl',row.产品名称||'未命名');ttl.classList.add('card-title');c.appendChild(ttl);
     var de=el('p','desc',row.一句话定位||'—');de.classList.add('card-desc');c.appendChild(de);
-    var meta=el('div','meta');
-    var pers=el('span','pers'),av=el('span','pav');av.style.background=avatarColor(txt(row.负责人));av.textContent=txt(row.负责人).slice(0,1)||'?';pers.appendChild(av);pers.appendChild(el('span','',row.负责人||''));meta.appendChild(pers);
-    var d=row.最近更新?txt(row.最近更新).slice(5,10):'',tm=el('span','time');tm.appendChild(el('span','',d));meta.appendChild(tm);
-    c.appendChild(meta);
+    var d=row.最近更新?txt(row.最近更新).slice(5,10):'';
+    if(d){var meta=el('div','meta'),tm=el('span','time');tm.appendChild(el('span','',d));meta.appendChild(tm);c.appendChild(meta);}
     var pinfo=prioInfo(row.优先级);
     if(pinfo){
       var pw=el('div','progwrap'),lbl=el('div','lbl');
@@ -345,8 +342,7 @@
     editingId=row.id;$('modalTitle').textContent='编辑产品卡片';
     var del=$('deleteBtn');if(del)del.style.display='';
     function set(n,v){var e=$('form').querySelector('[name="'+n+'"]');if(e)e.value=v==null?'':v;}
-    set('pname',row.产品名称);set('desc',row.一句话定位);set('owner',row.负责人);set('audience',row.目标用户);
-    set('risk',row.关键假设与风险);set('next',row.下一步行动);set('metric',row.核心指标);
+    set('pname',row.产品名称);set('desc',row.一句话定位);
     set('updated',row.最近更新||'');set('stage',row.当前阶段);set('priority',row.优先级);
     showMask('mask');
   }
@@ -355,9 +351,8 @@
   function collect(){
     function g(n){var e=$('form').querySelector('[name="'+n+'"]');return e?e.value:'';}
     return {
-      产品名称:g('pname'),当前阶段:g('stage'),一句话定位:g('desc'),目标用户:g('audience'),
-      负责人:g('owner'),优先级:g('priority'),关键假设与风险:g('risk'),下一步行动:g('next'),
-      核心指标:g('metric'),最近更新:g('updated')
+      产品名称:g('pname'),当前阶段:g('stage'),一句话定位:g('desc'),
+      优先级:g('priority'),最近更新:g('updated')
     };
   }
   function saveProduct(){
@@ -394,7 +389,7 @@
 
   /* ---- form draft cache ---- */
   var DRAFT='pf_v3_draft';
-  var NAMES=['pname','stage','desc','audience','priority','owner','risk','next','metric','updated'];
+  var NAMES=['pname','stage','desc','priority','updated'];
   function cacheDraft(){try{var d={};for(var i=0;i<NAMES.length;i++){var e=$('form').querySelector('[name="'+NAMES[i]+'"]');if(e)d[NAMES[i]]=e.value;}localStorage.setItem(DRAFT,JSON.stringify(d));}catch(e){}}
   function refillDraft(){try{var r=localStorage.getItem(DRAFT);if(!r)return;var d=JSON.parse(r);for(var i=0;i<NAMES.length;i++){if(d[NAMES[i]]==null)continue;var e=$('form').querySelector('[name="'+NAMES[i]+'"]');if(e)e.value=d[NAMES[i]];}}catch(e){}}
   function clearDraft(){try{localStorage.removeItem(DRAFT);}catch(e){}}
@@ -733,8 +728,8 @@
   }
   function promoteIdea(id){
     var r=findRec('idea',id);if(!r)return;
-    var p={id:uid(),产品名称:r.title||'未命名',当前阶段:'产品规划',一句话定位:r.text||'',目标用户:'',负责人:who(),
-      优先级:'中',关键假设与风险:'',下一步行动:'拆解需求与里程碑',核心指标:'',最近更新:today()};
+    var p={id:uid(),产品名称:r.title||'未命名',当前阶段:'产品规划',一句话定位:r.text||'',
+      优先级:'中',最近更新:today()};
     store.data.products.push(p);
     r.status='已通过';r.updatedAt=Date.now();
     logAdd('把灵感「'+(r.title||'未命名')+'」提升为产品「'+p.产品名称+'」，进入规划阶段');
@@ -818,8 +813,8 @@
   }
   function flowDecision(id){
     var rec=findRec('decision',id);if(!rec)return;
-    var p={id:uid(),产品名称:rec.title||'未命名',当前阶段:'产品规划',一句话定位:rec.note||'',目标用户:'',负责人:who(),
-      优先级:'高',关键假设与风险:'',下一步行动:'拆解需求与里程碑',核心指标:rec.arr?('ARR 目标 '+money(rec.arr)):'',最近更新:today()};
+    var p={id:uid(),产品名称:rec.title||'未命名',当前阶段:'产品规划',一句话定位:rec.note||'',
+      优先级:'高',最近更新:today()};
     store.data.products.push(p);
     logAdd('立项案「'+(rec.title||'未命名')+'」流转至产品规划阶段');
     store.save();renderAll();switchView('overview');toast('已生成产品卡片');

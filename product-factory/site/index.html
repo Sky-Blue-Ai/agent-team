@@ -164,12 +164,9 @@ button{font-family:inherit;cursor:pointer}
 .pcard:hover{box-shadow:var(--shadow-2);border-color:#cbd5e1;transform:translateY(-1px)}
 .pcard .tagrow{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:7px}
 .tag{font-size:9.5px;font-weight:600;padding:2px 7px;border-radius:99px;white-space:nowrap}
-.pnum{font-family:var(--mono);font-size:9.5px;font-weight:600;color:var(--t3)}
 .pcard .ttl{font-size:12.5px;font-weight:600;color:var(--t1);line-height:1.4}
 .pcard .desc{font-size:10.5px;color:var(--t3);margin-top:5px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .pcard .meta{display:flex;align-items:center;gap:6px;margin-top:9px;flex-wrap:wrap}
-.pcard .pers{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--t3)}
-.pcard .pav{width:18px;height:18px;border-radius:50%;font-size:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
 .pcard .time{margin-left:auto;font-family:var(--mono);font-size:9.5px;color:var(--t4)}
 .pcard .stage-sel{margin-top:9px;width:100%;font-size:10px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;color:var(--t2);background:var(--white)}
 .progwrap{margin-top:9px}
@@ -582,8 +579,7 @@ tr:hover td{background:var(--canvas)}
 <!-- 卡片字段结构声明:renderCards 生成的每张产品卡片都遵循此结构 -->
 <template id="cardTpl"><article class="pcard">
 <div class="card-title"></div><span class="card-stage"></span><p class="card-desc"></p>
-<div class="card-audience"></div><span class="card-priority"></span><div class="card-owner"></div>
-<div class="card-risk"></div><div class="card-next"></div><div class="card-metric"></div>
+<span class="card-priority"></span>
 <span class="card-updated"></span>
 </article></template>
 
@@ -729,13 +725,8 @@ tr:hover td{background:var(--canvas)}
     <div class="field"><label>产品名称 *</label><input name="pname" maxlength="80" required></div>
     <div class="field"><label>当前阶段 *</label><select name="stage" id="f_stage" required><option value="">请选择</option></select></div>
     <div class="field full"><label>一句话定位</label><input name="desc" maxlength="200" placeholder="用一句话说清它是什么、创造什么价值"></div>
-    <div class="field"><label>负责人</label><input name="owner" maxlength="40"></div>
     <div class="field"><label>优先级</label><select name="priority" id="f_priority"><option value="">请选择</option></select></div>
-    <div class="field"><label>目标用户</label><input name="audience" maxlength="120"></div>
     <div class="field"><label>最近更新</label><input name="updated" type="date"></div>
-    <div class="field full"><label>关键假设与风险</label><textarea name="risk" maxlength="500"></textarea></div>
-    <div class="field full"><label>下一步行动</label><textarea name="next" maxlength="500"></textarea></div>
-    <div class="field full"><label>核心指标</label><input name="metric" maxlength="200" placeholder="如：P1 · 完成度 90%"></div>
   </div></div>
   <div class="mf"><button type="button" class="btn-line" id="deleteBtn" style="margin-right:auto;color:#c92a2a;border-color:#ffc9c9;display:none">删除</button><button type="button" class="btn-line" id="cancelBtn">取消</button><button type="submit" class="btn-primary" id="submitBtn">保存</button></div>
   </form>
