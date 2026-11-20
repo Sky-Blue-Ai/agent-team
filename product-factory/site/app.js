@@ -3,7 +3,7 @@
 
   /* ==================== constants ==================== */
   var KEY='pf_workbench_v3';
-  var VIEWS={overview:'主工厂流水线',strategy:'灵感与战略',delivery:'产研交付台',growth:'增长与调优'};
+  var VIEWS={overview:'主工厂流水线',strategy:'灵感与战略',delivery:'产研交付台',growth:'增长与调优',knowledge:'知识库与 SOP'};
   var STAGES=[
     {t:'灵感',c:'#8b5cf6',bg:'#f5f3ff'},
     {t:'产品规划',c:'#0284c7',bg:'#f0f9ff'},
@@ -63,7 +63,7 @@
           if(d&&d.version===1&&d.products&&d.contents){this.data=migrate(d);return;}
         }catch(e){}
       }
-      this.data={version:1,updatedAt:'',contents:{},products:[],ideas:[],okrs:[],decisions:[],warns:[],checks:[],tasks:[],gate:[],metrics:[],channels:[],experiments:[],plays:[],log:[]};
+      this.data={version:1,updatedAt:'',contents:{},products:[],ideas:[],okrs:[],decisions:[],warns:[],checks:[],tasks:[],gate:[],metrics:[],channels:[],experiments:[],plays:[],kb:[],sops:[],log:[]};
       this.save();
     },
     save:function(){
@@ -73,7 +73,7 @@
     },
     schedule:function(){clearTimeout(saveTimer);saveTimer=setTimeout(function(){store.save();},350);}
   };
-  var LISTS=['ideas','okrs','decisions','warns','checks','tasks','gate','metrics','channels','experiments','plays','log','products'];
+  var LISTS=['ideas','okrs','decisions','warns','checks','tasks','gate','metrics','channels','experiments','plays','kb','sops','log','products'];
   function migrate(d){
     for(var i=0;i<LISTS.length;i++)if(!Array.isArray(d[LISTS[i]]))d[LISTS[i]]=[];
     return d;
@@ -83,7 +83,7 @@
     'warns':'warns','checks':'checks','tasks':'tasks','metrics':'metrics','channels':'channels',
     'experiments':'experiments','plays':'plays',
     'idea':'ideas','okr':'okrs','decision':'decisions','warn':'warns','check':'checks','task':'tasks',
-    'metric':'metrics','channel':'channels','experiment':'experiments','play':'plays'};
+    'metric':'metrics','channel':'channels','experiment':'experiments','play':'plays','kb':'kb','sop':'sops'};
   function storeKey(k){return KEYS[k]||String(k).replace(/s$/,'')+'s';}
   function list(k){
     var v=store.data[storeKey(k)];
@@ -501,6 +501,28 @@
         {n:'status',l:'状态',t:'select',opts:['进行中','显著胜出','无显著差异','已归档']}
       ],
       sub:function(r){return r.title+' · '+(r.status||'进行中');}
+    },
+    kb:{
+      title:'知识条目',label:'知识条目',empty:'还没有知识条目。点「新建知识条目」，把踩过的坑和方法沉淀下来。',
+      fields:[
+        {n:'title',l:'标题',t:'input',req:true,full:true,ph:'如：Puppeteer 无头浏览器报错排查清单'},
+        {n:'cat',l:'分类',t:'select',opts:['踩坑记录','方法总结','工具手册','流程规范','参考资料','其他']},
+        {n:'level',l:'掌握程度',t:'select',opts:['已掌握','基本掌握','待验证','不熟']},
+        {n:'tags',l:'标签',t:'input',full:true,ph:'多个标签用逗号分隔，如：调试,Chrome,前端'},
+        {n:'body',l:'正文',t:'textarea',full:true,ph:'尽量写清楚：现象 → 原因 → 解法。支持换行。'}
+      ],
+      sub:function(r){return r.title+(r.cat?' · '+r.cat:'');}
+    },
+    sop:{
+      title:'SOP 流程',label:'SOP',empty:'还没有 SOP。点「新增 SOP 流程」，把重复操作固化成步骤。',
+      fields:[
+        {n:'title',l:'流程名称',t:'input',req:true,full:true,ph:'如：新版本发布上线检查流程'},
+        {n:'cat',l:'适用场景',t:'select',opts:['研发交付','发布上线','质量验收','运营增长','问题排查','其他']},
+        {n:'owner',l:'负责人',t:'input'},
+        {n:'trigger',l:'触发条件',t:'input',full:true,ph:'什么时候该走这个流程？'},
+        {n:'steps',l:'步骤（每行一步）',t:'textarea',full:true,ph:'第一步做什么\n第二步做什么\n第三步做什么'}
+      ],
+      sub:function(r){return r.title+(r.cat?' · '+r.cat:'');}
     },
     play:{
       title:'策略复盘',label:'复盘',empty:'还没有复盘记录。把「问题 → 对策」沉淀在这里。',
@@ -1144,6 +1166,177 @@
     renderHealth();renderLog();
   }
 
+  /* ==================== 知识库 & SOP ==================== */
+  var KB_LEVEL_TONE={'已掌握':['#e6fcf5','#087f5b'],'基本掌握':['#eef2ff','#4f46e5'],'待验证':['#fff3bf','#e67700'],'不熟':['#f1f5f9','#64748b']};
+  var KB_CAT_TONE={'踩坑记录':['#ffe3e3','#c92a2a'],'方法总结':['#e2dfff','#4f46e5'],'工具手册':['#ecfeff','#0891b2'],'流程规范':['#e6fcf5','#087f5b'],'参考资料':['#f1f5f9','#475569'],'其他':['#f1f5f9','#475569']};
+  var kbFilter='';
+
+  function parseSteps(t){
+    return txt(t).split(/\r?\n/).map(function(x){return x.trim();}).filter(Boolean);
+  }
+  function kbTags(r){
+    return txt(r.tags).split(/[,，、\s]+/).map(function(x){return x.trim();}).filter(Boolean);
+  }
+
+  function renderKbStats(){
+    var items=list('kb'),sops=list('sops');
+    var mastered=0;for(var i=0;i<items.length;i++)if(items[i].level==='已掌握')mastered++;
+    var ste=0;for(var j=0;j<sops.length;j++)ste+=parseSteps(sops[j].steps).length;
+    var t=$('kbTotal');if(t)t.textContent=items.length;
+    var m=$('kbMastered');if(m)m.textContent=mastered+' 条已掌握';
+    var st=$('sopTotal');if(st)st.textContent=sops.length;
+    var ss=$('sopSteps');if(ss)ss.textContent=ste+' 个步骤';
+    /* 最近更新 */
+    var all=items.concat(sops).filter(function(r){return r.updatedAt||r.createdAt;});
+    all.sort(function(a,b){return (b.updatedAt||b.createdAt)-(a.updatedAt||a.createdAt);});
+    var rec=$('kbRecent'),recN=$('kbRecentName');
+    if(rec)rec.textContent=all.length?daysAgo(all[0].updatedAt||all[0].createdAt):'—';
+    if(recN)recN.textContent=all.length?(all[0].title||'未命名'):'暂无内容';
+    /* 高频使用 */
+    var used=items.filter(function(r){return (r.uses||0)>0;}).sort(function(a,b){return (b.uses||0)-(a.uses||0);});
+    var tu=$('kbTopUsed'),tuN=$('kbTopUsedName');
+    if(tu)tu.textContent=used.length?String(used[0].uses):'—';
+    if(tuN)tuN.textContent=used.length?(used[0].title||'未命名'):'还没有使用记录';
+    /* 分类 tab */
+    var tabs=$('kbTabs');
+    if(tabs){
+      var cats=[],seen={};
+      for(var k=0;k<items.length;k++){var c=items[k].cat||'其他';if(!seen[c]){seen[c]=1;cats.push(c);}}
+      var html='<button class="'+(kbFilter?'':'on')+'" data-cat="">全部 ('+items.length+')</button>';
+      for(var q=0;q<cats.length;q++){
+        var n=0;for(var w=0;w<items.length;w++)if((items[w].cat||'其他')===cats[q])n++;
+        html+='<button class="'+(kbFilter===cats[q]?'on':'')+'" data-cat="'+esc(cats[q])+'">'+esc(cats[q])+' ('+n+')</button>';
+      }
+      tabs.innerHTML=html;
+    }
+  }
+
+  function renderKb(){
+    var host=document.querySelector('[data-render="kb"]');if(!host)return;
+    renderKbStats();
+    var items=list('kb').slice();
+    var q=txt(kbQuery).toLowerCase().trim();
+    var filtered=items.filter(function(r){
+      if(kbFilter&&(r.cat||'其他')!==kbFilter)return false;
+      if(!q)return true;
+      var hay=(txt(r.title)+' '+txt(r.body)+' '+txt(r.tags)+' '+txt(r.cat)).toLowerCase();
+      return hay.indexOf(q)>=0;
+    });
+    /* 已掌握靠前，其次按更新时间 */
+    filtered.sort(function(a,b){
+      var la=a.level==='已掌握'?0:1,lb=b.level==='已掌握'?0:1;
+      if(la!==lb)return la-lb;
+      return (b.updatedAt||b.createdAt||0)-(a.updatedAt||a.createdAt||0);
+    });
+    clear(host);
+    if(!filtered.length){emptyNote(host);return;}
+    for(var i=0;i<filtered.length;i++)(function(r){
+      var card=el('div','kb-card');
+      var head=el('div','kb-head');
+      head.appendChild(el('b','',r.title||'未命名'));
+      var lv=r.level||'待验证',tone=KB_LEVEL_TONE[lv]||KB_LEVEL_TONE['待验证'];
+      var pill=el('span','pill',lv);pill.style.background=tone[0];pill.style.color=tone[1];
+      pill.style.cursor='pointer';pill.title='点击切换掌握程度';
+      pill.addEventListener('click',function(){
+        var order=['待验证','基本掌握','已掌握','不熟'],ix=order.indexOf(r.level);r.level=order[(ix+1)%order.length];
+        r.updatedAt=Date.now();store.save();renderAll();toast('已标记为「'+r.level+'」');
+      });
+      head.appendChild(pill);
+      card.appendChild(head);
+      var meta=el('div','kb-meta');
+      var ct=KB_CAT_TONE[r.cat||'其他']||KB_CAT_TONE['其他'];
+      var cp=el('span','pill',r.cat||'其他');cp.style.background=ct[0];cp.style.color=ct[1];meta.appendChild(cp);
+      var tags=kbTags(r);
+      if(tags.length){
+        var tw=el('div','kb-tags');
+        for(var g=0;g<tags.length;g++)tw.appendChild(el('span','kb-tag',tags[g]));
+        meta.appendChild(tw);
+      }
+      meta.appendChild(el('span','mono muted',(r.uses||0)+' 次使用'));
+      meta.appendChild(el('span','muted',daysAgo(r.updatedAt||r.createdAt)));
+      card.appendChild(meta);
+      if(r.body){
+        var body=el('p','kb-body',r.body);
+        if((r.body||'').length>110){
+          var box=el('details');
+          box.appendChild(el('summary','','展开全文 ▾'));
+          box.appendChild(body);
+          box.addEventListener('toggle',function(){
+            var sm=box.querySelector('summary');
+            if(sm)sm.textContent=box.open?'收起 ▴':'展开全文 ▾';
+          });
+          card.appendChild(box);
+        }else{
+          card.appendChild(body);
+        }
+      }
+      var acts=el('div','rec-acts');
+      var use=el('button','rec-btn ok','+1 使用');use.type='button';
+      use.addEventListener('click',function(){r.uses=(r.uses||0)+1;r.updatedAt=Date.now();store.save();renderAll();toast('已记一次使用');});
+      acts.appendChild(use);
+      acts.appendChild(recActs('kb',r));
+      card.appendChild(acts);
+      host.appendChild(card);
+    })(filtered[i]);
+  }
+
+  function renderSops(){
+    var host=document.querySelector('[data-render="sops"]');if(!host)return;
+    var items=list('sops').slice().sort(function(a,b){return (b.updatedAt||b.createdAt||0)-(a.updatedAt||a.createdAt||0);});
+    clear(host);
+    if(!items.length){emptyNote(host);return;}
+    for(var i=0;i<items.length;i++)(function(r){
+      var box=el('div','sop');
+      var head=el('div','sop-head');
+      head.appendChild(el('b','',r.title||'未命名流程'));
+      var right=el('div','');
+      right.style.cssText='display:flex;gap:7px;align-items:center';
+      if(r.cat){var ct=KB_CAT_TONE[r.cat]||['#eef2ff','#4f46e5'];var p=el('span','pill',r.cat);p.style.background=ct[0];p.style.color=ct[1];right.appendChild(p);}
+      head.appendChild(right);
+      box.appendChild(head);
+      var meta=[];
+      if(r.owner)meta.push('负责人 '+r.owner);
+      if(r.trigger)meta.push('触发：'+r.trigger);
+      var steps=parseSteps(r.steps);
+      meta.push(steps.length+' 个步骤');
+      box.appendChild(el('div','sop-meta',meta.join(' · ')));
+      if(steps.length){
+        var ul=el('ul','steps');
+        for(var k=0;k<steps.length;k++){
+          var li=el('li','');
+          var m=steps[k].match(/^(.{1,24}?)[：:]\s*(.+)$/);
+          if(m){li.appendChild(el('span','sn',m[1]));li.appendChild(el('span','sd',m[2]));}
+          else li.appendChild(el('span','sn',steps[k]));
+          ul.appendChild(li);
+        }
+        box.appendChild(ul);
+      }
+      box.appendChild(recActs('sop',r));
+      host.appendChild(box);
+    })(items[i]);
+  }
+
+  var kbQuery='';
+  function bindKbSearch(){
+    var inp=$('kbSearch');
+    if(inp&&!inp.__bound){
+      inp.__bound=true;
+      inp.addEventListener('input',function(){kbQuery=inp.value;renderKb();});
+    }
+  }
+  function bindKbTabs(){
+    var tabs=$('kbTabs');
+    if(tabs&&!tabs.__bound){
+      tabs.__bound=true;
+      tabs.addEventListener('click',function(e){
+        var t=e.target;
+        while(t&&t!==tabs&&t.tagName!=='BUTTON')t=t.parentNode;
+        if(!t||t===tabs||!t.hasAttribute('data-cat'))return;
+        kbFilter=t.getAttribute('data-cat')||'';renderKb();
+      });
+    }
+  }
+
   function renderAll(){
     renderCards();
     renderKPIs();
@@ -1156,6 +1349,10 @@
     renderChannels();
     renderExperiments();
     renderPlays();
+    renderKb();
+    renderSops();
+    bindKbSearch();
+    bindKbTabs();
     renderProductsSide();
   }
 

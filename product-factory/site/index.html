@@ -415,6 +415,34 @@ tr:hover td{background:var(--canvas)}
 .okr .rec-acts,.adapt .rec-acts{margin-top:6px}
 .decision-acts{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
 #riceTop .top-card{margin-bottom:12px}
+
+/* ============ KNOWLEDGE & SOP ============ */
+.kb-search{height:30px;padding:0 10px;border:1px solid var(--border);border-radius:7px;font-size:11.5px;color:var(--t1);background:var(--white);outline:none;width:210px;font-family:inherit}
+.kb-search:focus{border-color:var(--primary-c);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+.kb-card{border:1px solid var(--border);border-radius:8px;padding:13px;margin-bottom:10px;background:var(--white);transition:.15s}
+.kb-card:hover{box-shadow:var(--shadow-2);border-color:#cbd5e1}
+.kb-card .kb-head{display:flex;align-items:flex-start;gap:8px;justify-content:space-between}
+.kb-card .kb-head b{font-size:12.5px;color:var(--t1);line-height:1.45}
+.kb-card .kb-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:8px}
+.kb-card .kb-body{font-size:10.5px;color:var(--t3);line-height:1.6;margin:8px 0 0;white-space:pre-wrap;max-height:80px;overflow:hidden;position:relative}
+.kb-card .kb-body.open{max-height:none}
+.kb-card details summary{cursor:pointer;font-size:10.5px;color:var(--primary);margin-top:8px;list-style:none}
+.kb-card details summary::-webkit-details-marker{display:none}
+.kb-card details[open] .kb-body{max-height:none;-webkit-line-clamp:unset;display:block}
+.kb-card .kb-tags{display:flex;gap:4px;flex-wrap:wrap}
+.kb-card .kb-tag{font-size:9.5px;background:var(--surface-low);color:var(--t3);padding:1px 7px;border-radius:99px}
+.sop{border:1px solid var(--border);border-radius:9px;padding:14px;margin-bottom:11px;background:var(--white)}
+.sop .sop-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sop .sop-head b{font-size:12.5px;color:var(--t1)}
+.sop .sop-meta{font-size:10px;color:var(--t3);margin:5px 0 0}
+.sop .steps{counter-reset:s;margin:11px 0 0;padding:0;list-style:none}
+.sop .steps li{counter-increment:s;position:relative;padding:0 0 12px 30px;font-size:11px;color:var(--t2);line-height:1.55}
+.sop .steps li:before{content:counter(s);position:absolute;left:0;top:0;width:19px;height:19px;border-radius:50%;background:var(--primary-fixed);color:var(--primary);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:var(--mono)}
+.sop .steps li:after{content:'';position:absolute;left:9px;top:21px;bottom:1px;width:1px;background:var(--border)}
+.sop .steps li:last-child{padding-bottom:0}
+.sop .steps li:last-child:after{display:none}
+.sop .steps li .sn{font-weight:600;color:var(--t1);display:block}
+.sop .steps li .sd{color:var(--t3);font-size:10.5px}
 </style>
 </head>
 <body>
@@ -479,8 +507,7 @@ tr:hover td{background:var(--canvas)}
     </div>
     <div class="nav-group">
       <div class="nav-title">工程协同</div>
-      <a class="nav-item" data-soon="1"><svg class="ic"><use href="#i-book"/></svg>知识库 & SOP</a>
-      <a class="nav-item" data-soon="1"><svg class="ic"><use href="#i-checkdoc"/></svg>工单与决策流</a>
+      <a class="nav-item" data-view="knowledge"><svg class="ic"><use href="#i-book"/></svg>知识库 &amp; SOP</a>
     </div>
   </div>
   <div class="side-bottom">
@@ -711,6 +738,50 @@ tr:hover td{background:var(--canvas)}
       <div class="mini-body" data-render="plays" data-empty="还没有复盘记录。把「问题 → 对策 → 验证」沉淀在这里。">
         <div class="adapt"><div class="prob"><b>示例</b><p>示例</p></div><div class="arrow"><svg class="ic lg"><use href="#i-arrow"/></svg></div><div class="solution"><b>示例</b><p>示例</p></div></div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== VIEW 5: KNOWLEDGE & SOP ==================== -->
+<section class="view" id="view-knowledge">
+  <div class="card vhead">
+    <div class="eyebrow"><span class="tag" style="background:#f5f3ff;color:#8b5cf6">ENGINEERING · Knowledge Base</span></div>
+    <h1>知识库与标准作业流程</h1>
+    <p>沉淀踩过的坑、验证过的方法和可复用的流程。可全文搜索，可标记掌握程度与使用次数。</p>
+    <div class="acts">
+      <button class="btn-ghost" data-add="sop"><svg class="ic sm"><use href="#i-route"/></svg>新增 SOP 流程</button>
+      <button class="btn-primary" data-add="kb"><svg class="ic sm"><use href="#i-plus"/></svg>新建知识条目</button>
+    </div>
+  </div>
+
+  <div class="kpis">
+    <div class="card kpi"><div class="top"><span class="cap">知识条目</span><span class="ico" style="background:#e2dfff"><svg class="ic sm" style="color:#4f46e5"><use href="#i-book"/></svg></span></div><div class="big" id="kbTotal">0</div><div class="foot"><span class="good" id="kbMastered">0 条已掌握</span><span class="mono">全量沉淀</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">SOP 流程</span><span class="ico" style="background:#dae2fd"><svg class="ic sm" style="color:#565e74"><use href="#i-route"/></svg></span></div><div class="big" id="sopTotal">0</div><div class="foot"><span class="good" id="sopSteps">0 个步骤</span><span class="mono">可执行流程</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">最近更新</span><span class="ico" style="background:#dce9ff"><svg class="ic sm" style="color:#00524b"><use href="#i-clock"/></svg></span></div><div class="big" id="kbRecent">—</div><div class="foot"><span class="muted" id="kbRecentName">暂无内容</span><span class="mono">知识新鲜度</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">高频使用</span><span class="ico" style="background:#89f5e7"><svg class="ic sm" style="color:#00524b"><use href="#i-trend"/></svg></span></div><div class="big" id="kbTopUsed">—</div><div class="foot"><span class="good" id="kbTopUsedName">还没有使用记录</span><span class="mono">按使用次数</span></div></div>
+  </div>
+
+  <div class="card">
+    <div class="mini-head">
+      <div class="t"><svg class="ic sm"><use href="#i-book"/></svg>知识条目</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input id="kbSearch" class="kb-search" type="text" placeholder="搜索标题、正文或标签…">
+        <button class="chipbtn" data-add="kb"><svg class="ic sm"><use href="#i-plus"/></svg>新建条目</button>
+      </div>
+    </div>
+    <div class="tabs" id="kbTabs"><button class="on" data-cat="">全部</button></div>
+    <div class="mini-body" data-render="kb" data-empty="还没有知识条目。点右上角「新建知识条目」，把踩过的坑和方法沉淀下来。">
+      <div class="kb-card"><div class="kb-head"><b>示例</b></div><p>示例</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="mini-head">
+      <div class="t"><svg class="ic sm"><use href="#i-route"/></svg>SOP 标准作业流程</div>
+      <button class="chipbtn" data-add="sop"><svg class="ic sm"><use href="#i-plus"/></svg>新增流程</button>
+    </div>
+    <div class="mini-body" data-render="sops" data-empty="还没有 SOP。点右上角「新增 SOP 流程」，把重复执行的操作固化成可复用步骤。">
+      <div class="sop"><div class="sop-head"><b>示例</b></div></div>
     </div>
   </div>
 </section>
