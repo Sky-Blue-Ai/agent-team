@@ -1,0 +1,62 @@
+{
+  "title": "产品工厂工作台",
+  "page_type": "mixed",
+  "properties": {
+    "产品名称": { "text": "" },
+    "当前阶段": { "select": { "options": [
+      { "text": "灵感", "id": "nzq1bizxbyac6iy8" },
+      { "text": "产品规划", "id": "5utj0xv0ulqs9vle" },
+      { "text": "战略决策", "id": "182y17ka6kwavyzv" },
+      { "text": "产品设计", "id": "mea9llxuqla1i8nc" },
+      { "text": "产品开发", "id": "o7bbmgo2ocbtjutt" },
+      { "text": "产品落地", "id": "xk6wd6v922fuaqcf" },
+      { "text": "产品上线", "id": "nqqa5snoe647prlc" },
+      { "text": "推广运营", "id": "zxtfkqmtj00e6nsq" },
+      { "text": "动态调整", "id": "4wyjscgdw4glm9gc" }
+    ] } },
+    "一句话定位": { "text": "" },
+    "目标用户": { "text": "" },
+    "优先级": { "select": { "options": [
+      { "text": "高", "id": "rxrr8vxkbjei9u2f" },
+      { "text": "中", "id": "a6yuvyweugntfzxo" },
+      { "text": "低", "id": "2qyng159hzip7aq4" }
+    ] } },
+    "负责人": { "text": "" },
+    "关键假设与风险": { "text": "" },
+    "下一步行动": { "text": "" },
+    "核心指标": { "text": "" },
+    "最近更新": { "date": "1970-01-01T00:00:00Z" }
+  },
+  "field_mapping": {
+    "产品名称": { "value_type": "text", "form_input": "[name=\"pname\"]", "display_selector": ".card-title", "render_signal": "label:contains('产品名称')" },
+    "当前阶段": { "value_type": "select", "form_input": "[name=\"stage\"]", "display_selector": ".card-stage", "render_signal": "label:contains('当前阶段')", "options_value_key": "value" },
+    "一句话定位": { "value_type": "text", "form_input": "[name=\"desc\"]", "display_selector": ".card-desc", "render_signal": "label:contains('一句话定位')" },
+    "目标用户": { "value_type": "text", "form_input": "[name=\"audience\"]", "display_selector": ".card-audience", "render_signal": "label:contains('目标用户')" },
+    "优先级": { "value_type": "select", "form_input": "[name=\"priority\"]", "display_selector": ".card-priority", "render_signal": "label:contains('优先级')", "options_value_key": "value" },
+    "负责人": { "value_type": "text", "form_input": "[name=\"owner\"]", "display_selector": ".card-owner", "render_signal": "label:contains('负责人')" },
+    "关键假设与风险": { "value_type": "text", "form_input": "[name=\"risk\"]", "display_selector": ".card-risk", "render_signal": "label:contains('关键假设与风险')" },
+    "下一步行动": { "value_type": "text", "form_input": "[name=\"next\"]", "display_selector": ".card-next", "render_signal": "label:contains('下一步行动')" },
+    "核心指标": { "value_type": "text", "form_input": "[name=\"metric\"]", "display_selector": ".card-metric", "render_signal": "label:contains('核心指标')" },
+    "最近更新": { "value_type": "date", "form_input": "[name=\"updated\"]", "display_selector": ".card-updated", "render_signal": "label:contains('最近更新')" }
+  },
+  "options_map": {
+    "当前阶段": {
+      "nzq1bizxbyac6iy8": { "text": "灵感", "id": "nzq1bizxbyac6iy8" },
+      "5utj0xv0ulqs9vle": { "text": "产品规划", "id": "5utj0xv0ulqs9vle" },
+      "182y17ka6kwavyzv": { "text": "战略决策", "id": "182y17ka6kwavyzv" },
+      "mea9llxuqla1i8nc": { "text": "产品设计", "id": "mea9llxuqla1i8nc" },
+      "o7bbmgo2ocbtjutt": { "text": "产品开发", "id": "o7bbmgo2ocbtjutt" },
+      "xk6wd6v922fuaqcf": { "text": "产品落地", "id": "xk6wd6v922fuaqcf" },
+      "nqqa5snoe647prlc": { "text": "产品上线", "id": "nqqa5snoe647prlc" },
+      "zxtfkqmtj00e6nsq": { "text": "推广运营", "id": "zxtfkqmtj00e6nsq" },
+      "4wyjscgdw4glm9gc": { "text": "动态调整", "id": "4wyjscgdw4glm9gc" }
+    },
+    "优先级": {
+      "rxrr8vxkbjei9u2f": { "text": "高", "id": "rxrr8vxkbjei9u2f" },
+      "a6yuvyweugntfzxo": { "text": "中", "id": "a6yuvyweugntfzxo" },
+      "2qyng159hzip7aq4": { "text": "低", "id": "2qyng159hzip7aq4" }
+    }
+  },
+  "source": "agent_analysis",
+  "sdk_calls_found": false
+}

@@ -1,0 +1,4 @@
+.DS_Store
+*.genie
+.backup-*/
+node_modules/

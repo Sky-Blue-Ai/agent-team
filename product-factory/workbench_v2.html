@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProductForge · 全生命周期协同工作台</title>
+<style>
+:root{
+  --surface:#f8f9ff; --surface-low:#eff4ff; --surface-container:#e5eeff;
+  --surface-high:#dce9ff; --surface-highest:#d3e4fe; --white:#ffffff;
+  --on-surface:#0b1c30; --on-surface-v:#464555; --outline:#777587; --outline-v:#c7c4d8;
+  --primary:#3525cd; --primary-c:#4f46e5; --on-primary:#ffffff; --primary-fixed:#e2dfff;
+  --secondary:#565e74; --secondary-fixed:#dae2fd; --tertiary:#00524b; --tertiary-c:#006c63;
+  --tertiary-fixed:#89f5e7; --error:#ba1a1a; --error-container:#ffdad6;
+  --border:#e2e8f0; --border-subtle:#f1f5f9; --canvas:#f8fafc;
+  --t1:#0f172a; --t2:#334155; --t3:#64748b; --t4:#94a3b8;
+  --emerald:#059669; --rose:#e11d48;
+  --s1:8b5cf6;--s1bg:f5f3ff;--s2:0284c7;--s2bg:f0f9ff;--s3:d97706;--s3bg:fffbeb;
+  --s4:e11d48;--s4bg:fff1f2;--s5:059669;--s5bg:ecfdf5;--s6:0d9488;--s6bg:f0fdfa;
+  --s7:4f46e5;--s7bg:eef2ff;--s8:ea580c;--s8bg:fff7ed;--s9:0891b2;--s9bg:ecfeff;
+  --shadow-1:0 1px 2px 0 rgba(15,23,42,.04);
+  --shadow-2:0 4px 12px -2px rgba(15,23,42,.06),0 2px 4px -2px rgba(15,23,42,.03);
+  --shadow-3:0 20px 25px -5px rgba(15,23,42,.08),0 8px 10px -6px rgba(15,23,42,.04);
+  --font:'Inter','PingFang SC','Microsoft YaHei','Hiragino Sans GB','Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--canvas);color:var(--t1);font-family:var(--font);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+img{max-width:100%;height:auto}
+button{font-family:inherit;cursor:pointer}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.ic{width:18px;height:18px;flex:0 0 auto;display:inline-block;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ic.sm{width:15px;height:15px}.ic.lg{width:22px;height:22px}
+.upper{text-transform:uppercase;letter-spacing:.05em}
+.muted{color:var(--t3)}.t2{color:var(--t2)}.t4{color:var(--t4)}
+
+/* ============ SIDEBAR ============ */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:256px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:space-between;z-index:50;box-shadow:var(--shadow-1)}
+.side-top{overflow-y:auto;flex:1}
+.brand{display:flex;align-items:center;gap:10px;padding:18px 16px}
+.brand .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#4f46e5,#3525cd);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.brand .mark svg{width:20px;height:20px;stroke:#fff}
+.brand .txt{display:flex;flex-direction:column;min-width:0}
+.brand .txt b{font-size:16px;font-weight:600;color:var(--on-surface);letter-spacing:-.3px}
+.brand .txt span{font-size:11px;color:var(--t3);white-space:nowrap}
+.nav-group{padding:8px 12px}
+.nav-title{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--t4);padding:8px 10px 6px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:8px;color:var(--t2);font-size:13px;font-weight:500;cursor:pointer;transition:.15s;text-decoration:none;margin-bottom:2px}
+.nav-item .ic{color:var(--t3)}
+.nav-item:hover{background:var(--surface-container);color:var(--t1)}
+.nav-item.active{background:var(--primary-c);color:#fff;font-weight:600}
+.nav-item.active .ic{color:#fff}
+.prod-item{display:flex;align-items:center;gap:10px;padding:7px 11px;border-radius:8px;font-size:12.5px;color:var(--t2);cursor:pointer}
+.prod-item:hover{background:var(--surface-low)}
+.prod-item .dot{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
+.prod-item.sel{color:var(--t1);font-weight:600}
+.side-bottom{padding:12px;border-top:1px solid var(--border-subtle)}
+.quota{background:var(--surface-low);border-radius:12px;padding:13px;margin-bottom:10px}
+.quota .row{display:flex;justify-content:space-between;font-size:11px;color:var(--t3)}
+.quota .row .mono{color:var(--primary);font-weight:600}
+.bar{height:6px;border-radius:99px;background:var(--surface-high);overflow:hidden;margin:8px 0}
+.bar>i{display:block;height:100%;border-radius:99px;background:var(--primary-c)}
+.quota .foot{display:flex;justify-content:space-between;font-size:10.5px;color:var(--t4)}
+.profile{display:flex;align-items:center;gap:9px;padding:6px 4px}
+.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex:0 0 auto}
+.profile .who{display:flex;flex-direction:column;min-width:0;flex:1}
+.profile .who b{font-size:12.5px;color:var(--t1);font-weight:600}
+.profile .who span{font-size:10.5px;color:var(--t3);display:flex;align-items:center;gap:5px}
+.profile .who span i{width:6px;height:6px;border-radius:50%;background:var(--tertiary-c)}
+
+/* ============ TOPBAR ============ */
+.topbar{position:fixed;left:256px;right:0;top:0;height:64px;background:rgba(255,255,255,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 24px;z-index:40}
+.crumb{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--t3);white-space:nowrap}
+.crumb b{color:var(--t1);font-weight:600}.crumb .cur{color:var(--primary);font-weight:600}
+.topsearch{position:relative;flex:1;max-width:420px;display:none}
+@media(min-width:1180px){.topsearch{display:block}}
+.topsearch .ic{position:absolute;left:11px;top:9px;color:var(--t4)}
+.topsearch input{width:100%;height:36px;padding:0 52px 0 36px;border:1px solid var(--border);border-radius:8px;background:var(--white);font-size:12.5px;color:var(--t1);outline:none}
+.topsearch input:focus{border-color:var(--primary-c);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+.topsearch .kbd{position:absolute;right:8px;top:9px;font-size:10px;color:var(--t3);background:var(--surface-container);padding:1px 6px;border-radius:4px;font-family:var(--mono)}
+.stagechips{display:none;align-items:center;gap:2px;background:var(--surface-low);padding:4px;border-radius:99px;overflow-x:auto}
+@media(min-width:1400px){.stagechips{display:flex}}
+.stagechips span{font-size:11px;padding:4px 9px;border-radius:99px;color:var(--t3);white-space:nowrap;cursor:pointer}
+.stagechips span.on{background:var(--primary-c);color:#fff;font-weight:600;display:flex;align-items:center;gap:5px}
+.stagechips span.on i{width:5px;height:5px;border-radius:50%;background:#fff}
+.top-actions{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.iconbtn{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--t3);background:transparent;border:none;position:relative}
+.iconbtn:hover{background:var(--surface-container);color:var(--t1)}
+.iconbtn .badge{position:absolute;top:3px;right:3px;width:15px;height:15px;border-radius:50%;background:var(--primary-c);color:#fff;font-size:9px;font-family:var(--mono);display:flex;align-items:center;justify-content:center}
+.btn-primary{height:36px;padding:0 14px;border-radius:8px;background:var(--primary-c);color:#fff;border:none;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:7px;white-space:nowrap}
+.btn-primary:hover{background:var(--primary)}
+.btn-primary:disabled{opacity:.55;cursor:not-allowed}
+
+/* ============ MAIN ============ */
+.main{margin-left:256px;padding:88px 24px 60px;min-height:100vh}
+.view{display:none;flex-direction:column;gap:18px;animation:fade .25s ease}
+.view.active{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-1)}
+.pad{padding:18px 20px}
+.h2{font-size:15px;font-weight:600;color:var(--t1)}
+.h3{font-size:13.5px;font-weight:600;color:var(--t1)}
+.cap{font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--t3)}
+
+/* welcome */
+.welcome{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px 22px;box-shadow:var(--shadow-1)}
+.welcome h1{font-size:18px;font-weight:600;margin:0;color:var(--t1);letter-spacing:-.3px}
+.welcome .status{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--tertiary);background:var(--surface-low);padding:3px 10px;border-radius:99px;margin-left:8px;vertical-align:middle}
+.welcome .status i{width:7px;height:7px;border-radius:50%;background:#10b981;animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.welcome p{font-size:12px;color:var(--t3);margin:7px 0 0}
+.welcome .tools{display:flex;gap:9px;flex-wrap:wrap}
+.btn-ghost{height:36px;padding:0 13px;border-radius:8px;background:var(--surface-container);color:var(--t1);border:none;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:7px}
+.btn-ghost:hover{background:var(--surface-high)}
+
+/* KPI tiles */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.kpis{grid-template-columns:1fr}}
+.kpi{padding:17px 18px;display:flex;flex-direction:column;justify-content:space-between;min-height:132px;transition:.15s}
+.kpi:hover{box-shadow:var(--shadow-2)}
+.kpi .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.kpi .top .ic{color:var(--t4)}
+.kpi .ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.kpi .big{font-family:var(--mono);font-size:26px;font-weight:500;color:var(--t1);line-height:1.1}
+.kpi .big small{font-family:var(--font);font-size:12px;color:var(--t3);font-weight:400;margin-left:5px}
+.kpi .foot{display:flex;justify-content:space-between;align-items:center;margin-top:13px;font-size:10.5px;color:var(--t3)}
+.good{color:var(--emerald);font-weight:600}.bad{color:var(--rose);font-weight:600}
+
+/* section header */
+.sechead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.sechead .left{display:flex;align-items:center;gap:11px}
+.sechead .ico{width:30px;height:30px;border-radius:8px;background:var(--primary-c);color:#fff;display:flex;align-items:center;justify-content:center}
+.sechead p{font-size:11.5px;color:var(--t3);margin:3px 0 0}
+.segment{display:flex;background:var(--surface-low);padding:3px;border-radius:8px}
+.segment button{border:none;background:transparent;color:var(--t3);font-size:11px;padding:5px 11px;border-radius:6px}
+.segment button.on{background:var(--white);color:var(--t1);box-shadow:var(--shadow-1);font-weight:600}
+
+/* pipeline ribbon */
+.ribbon{display:none}
+@media(min-width:760px){.ribbon{display:block}}
+.ribbon-wrap{overflow-x:auto;padding:4px 0 8px}
+.ribbon-inner{min-width:900px;display:grid;grid-template-columns:repeat(9,1fr);gap:4px;background:var(--surface-low);padding:6px;border-radius:9px}
+.rb{display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 8px;border-radius:7px;font-size:11px;color:var(--t3);white-space:nowrap;cursor:pointer}
+.rb .dot{width:7px;height:7px;border-radius:50%}
+.rb.on{background:var(--white);box-shadow:var(--shadow-1);color:var(--t1);font-weight:600}
+.rb.alert{background:var(--error-container);color:#93000a}
+
+/* kanban board */
+.board{display:flex;gap:11px;overflow-x:auto;padding:4px 2px 12px;align-items:flex-start}
+.col{flex:0 0 214px;background:var(--surface-low);border-radius:10px;padding:9px;min-height:300px}
+.colhead{display:flex;align-items:center;justify-content:space-between;padding:3px 4px 10px}
+.colhead .name{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--t1)}
+.colhead .name .dot{width:8px;height:8px;border-radius:50%}
+.colhead .num{font-family:var(--mono);font-size:10px;background:var(--surface-high);color:var(--t2);padding:1px 8px;border-radius:99px}
+.cards{display:flex;flex-direction:column;gap:8px}
+.pcard{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:11px;box-shadow:var(--shadow-1);cursor:pointer;transition:.15s}
+.pcard:hover{box-shadow:var(--shadow-2);border-color:#cbd5e1;transform:translateY(-1px)}
+.pcard .tagrow{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:7px}
+.tag{font-size:9.5px;font-weight:600;padding:2px 7px;border-radius:99px;white-space:nowrap}
+.pnum{font-family:var(--mono);font-size:9.5px;font-weight:600;color:var(--t3)}
+.pcard .ttl{font-size:12.5px;font-weight:600;color:var(--t1);line-height:1.4}
+.pcard .desc{font-size:10.5px;color:var(--t3);margin-top:5px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pcard .meta{display:flex;align-items:center;gap:6px;margin-top:9px;flex-wrap:wrap}
+.pcard .pers{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--t3)}
+.pcard .pav{width:18px;height:18px;border-radius:50%;font-size:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+.pcard .time{margin-left:auto;font-family:var(--mono);font-size:9.5px;color:var(--t4)}
+.pcard .stage-sel{margin-top:9px;width:100%;font-size:10px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;color:var(--t2);background:var(--white)}
+.progwrap{margin-top:9px}
+.progwrap .lbl{display:flex;justify-content:space-between;font-size:9.5px;color:var(--t3);margin-bottom:4px}
+.progwrap .lbl .mono{color:var(--t2)}
+.col-empty{font-size:11px;color:var(--t4);text-align:center;padding:22px 4px}
+
+/* two-column bento */
+.bento2{display:grid;grid-template-columns:1.35fr 1fr;gap:14px}
+@media(max-width:1000px){.bento2{grid-template-columns:1fr}}
+.bento3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:1000px){.bento3{grid-template-columns:1fr}}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.g4,.g2{grid-template-columns:1fr}}
+
+/* action radar */
+.alertbox{background:#fff5f5;border:1px solid #ffc9c9;border-radius:8px;padding:13px;margin-bottom:10px}
+.alertbox .hd{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#c92a2a}
+.alertbox .hd .t{margin-left:auto;font-family:var(--mono);font-size:9.5px;color:#e03131}
+.alertbox .bd{font-size:11px;color:var(--t2);margin:8px 0;line-height:1.5}
+.alertbox .actions{display:flex;gap:7px;flex-wrap:wrap}
+.chipbtn{font-size:10.5px;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--white);color:var(--t2);display:inline-flex;align-items:center;gap:5px}
+.chipbtn.solid{background:#c92a2a;color:#fff;border-color:#c92a2a}
+.approve{background:var(--surface-low);border-radius:9px;padding:14px}
+.approve .row1{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.approve .row1 b{font-size:12.5px;font-weight:600;color:var(--t1)}
+.approve .rid{font-family:var(--mono);font-size:9.5px;color:var(--primary)}
+.approve .stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.approve .st{background:var(--white);border-radius:7px;padding:10px}
+.approve .st .k{font-size:9.5px;color:var(--t3)}
+.approve .st .v{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--t1);margin-top:3px}
+.approve .st .v.g{color:var(--emerald)}
+
+/* list rows */
+.rows{display:flex;flex-direction:column}
+.ui-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border-subtle)}
+.ui-row:last-child{border-bottom:none}
+.ui-row .mini{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.ui-row .body{flex:1;min-width:0}
+.ui-row .body b{font-size:12px;font-weight:600;color:var(--t1)}
+.ui-row .body p{font-size:10.5px;color:var(--t3);margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ui-row .right{text-align:right;flex:0 0 auto}
+.ui-row .right .mono{font-size:12px;font-weight:600;color:var(--t1)}
+.ui-row .right .sub{font-size:9.5px;color:var(--t3)}
+.pill{font-size:9.5px;font-weight:600;padding:2px 8px;border-radius:99px;display:inline-block}
+
+/* health bars */
+.hrow{padding:10px 0;border-bottom:1px solid var(--border-subtle)}
+.hrow:last-child{border:none}
+.hrow .l{display:flex;align-items:center;justify-content:space-between;font-size:11.5px}
+.hrow .l b{font-weight:600;color:var(--t1)}
+.hrow .l span{font-family:var(--mono);color:var(--t2)}
+.hrow .d{font-size:10px;color:var(--t3);margin:3px 0 6px}
+
+/* allocation stacked */
+.alloc{display:flex;height:10px;border-radius:99px;overflow:hidden;margin:12px 0 8px}
+.alloc i{display:block;height:100%}
+.legend{display:flex;gap:14px;flex-wrap:wrap}
+.legend div{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t3)}
+.legend i{width:8px;height:8px;border-radius:2px}
+
+/* timeline */
+.tl-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-subtle)}
+.tl-item:last-child{border:none}
+.tl-item .av{width:28px;height:28px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff}
+.tl-item .c{flex:1;min-width:0}
+.tl-item .c b{font-size:11.5px;color:var(--t1)}
+.tl-item .c p{font-size:10.5px;color:var(--t3);margin:3px 0}
+.tl-item .c .mk{color:var(--primary);font-weight:600}
+.tl-item .tm{font-family:var(--mono);font-size:9.5px;color:var(--t4);flex:0 0 auto}
+
+/* generic view header */
+.vhead{padding:20px 22px}
+.vhead .eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.vhead .eyebrow .tag{background:var(--primary-fixed);color:var(--primary);font-size:10px;font-weight:600;padding:3px 9px;border-radius:99px}
+.vhead .eyebrow .mono{font-size:10px;color:var(--t3)}
+.vhead h1{font-size:25px;font-weight:600;margin:0;color:var(--t1);letter-spacing:-.6px}
+.vhead p{font-size:12px;color:var(--t3);margin:6px 0 0}
+.vhead .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+.mini-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 16px;border-bottom:1px solid var(--border-subtle)}
+.mini-head .t{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--t1)}
+.mini-head .t .ic{color:var(--primary-c)}
+.mini-body{padding:14px 16px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--border-subtle);padding:0 16px}
+.tabs button{border:none;background:transparent;padding:10px 8px;font-size:11px;color:var(--t3);border-bottom:2px solid transparent}
+.tabs button.on{color:var(--primary);font-weight:600;border-bottom-color:var(--primary-c)}
+
+/* idea cards */
+.idea{border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:9px;background:var(--white)}
+.idea .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.idea .src{font-size:9.5px;font-weight:600;padding:2px 8px;border-radius:99px}
+.idea .vote{display:flex;align-items:center;gap:3px;font-family:var(--mono);font-size:10px;color:var(--t3)}
+.idea b{display:block;font-size:12.5px;color:var(--t1);margin:8px 0 4px}
+.idea p{font-size:10.5px;color:var(--t3);margin:0;line-height:1.5}
+.idea .ai{font-size:10px;color:var(--primary);margin-top:8px;display:flex;align-items:center;gap:5px}
+
+/* RICE table */
+table{width:100%;border-collapse:collapse}
+th{font-size:9.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--t3);text-align:left;padding:9px 8px;background:var(--canvas);border-bottom:1px solid var(--border)}
+td{font-size:11px;color:var(--t2);padding:9px 8px;border-bottom:1px solid var(--border-subtle)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--canvas)}
+.mono-val{font-family:var(--mono);color:var(--t1);font-weight:600}
+.score-big{font-family:var(--mono);font-size:30px;font-weight:500;color:var(--primary)}
+
+/* OKR */
+.okr{padding:12px 0;border-bottom:1px solid var(--border-subtle)}
+.okr:last-child{border:none}
+.okr .t{display:flex;justify-content:space-between;font-size:11px}
+.okr .t b{color:var(--t1)}
+.okr .t span{font-family:var(--mono);color:var(--primary);font-weight:600}
+.okr p{font-size:10.5px;color:var(--t2);margin:5px 0}
+.okr .meta{font-size:9.5px;color:var(--t3)}
+
+/* burndown svg */
+.chartbox{width:100%;height:120px}
+
+/* checklist */
+.check{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-subtle);align-items:flex-start}
+.check:last-child{border:none}
+.check .bx{width:18px;height:18px;border-radius:5px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.check .c{flex:1;min-width:0}
+.check .c b{font-size:11.5px;color:var(--t1)}
+.check .c p{font-size:10px;color:var(--t3);margin:2px 0 0}
+.check .st{font-size:9.5px;font-weight:600;padding:2px 7px;border-radius:99px;flex:0 0 auto}
+
+/* traceability */
+.trace{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+@media(max-width:1000px){.trace{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.trace{grid-template-columns:1fr}}
+.tr-step{border:1px solid var(--border);border-radius:8px;padding:12px;position:relative}
+.tr-step .no{font-family:var(--mono);font-size:9.5px;color:var(--t4)}
+.tr-step .ic{margin:8px 0;color:var(--primary-c)}
+.tr-step b{font-size:11px;color:var(--t1);display:block}
+.tr-step p{font-size:10px;color:var(--t3);margin:4px 0 0;line-height:1.45}
+.tr-step .dt{font-family:var(--mono);font-size:9px;color:var(--t4);margin-top:8px}
+
+/* growth metrics */
+.gmetrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:1000px){.gmetrics{grid-template-columns:repeat(2,1fr)}}
+.funnel{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.fn{height:30px;border-radius:5px;display:flex;align-items:center;padding:0 12px;font-size:11px;color:var(--t1);font-weight:600;margin:0 auto;transition:.2s}
+.insight{background:linear-gradient(135deg,#eef2ff,#f5f3ff);border:1px solid #dbe4ff;border-radius:8px;padding:14px}
+.insight .t{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--primary)}
+.insight p{font-size:11px;color:var(--t2);margin:8px 0 0;line-height:1.6}
+.insight b{color:var(--primary)}
+
+/* AB test */
+.exp{border:1px solid var(--border);border-radius:8px;padding:13px;margin-bottom:10px}
+.exp .top{display:flex;align-items:center;justify-content:space-between}
+.exp .eid{font-family:var(--mono);font-size:10px;color:var(--primary)}
+.exp b{font-size:12px;color:var(--t1);display:block;margin:7px 0 4px}
+.exp .cs{font-size:10px;color:var(--t3)}
+.exp .vars{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
+.exp .var{background:var(--canvas);border-radius:6px;padding:9px;font-size:10px}
+.exp .var .vc{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--t1)}
+.exp .win{background:#ebfbee;color:var(--emerald);font-size:9.5px;font-weight:600;padding:2px 8px;border-radius:99px}
+
+/* adaptation console */
+.adapt{display:grid;grid-template-columns:1fr 60px 1fr;gap:14px;align-items:center}
+@media(max-width:900px){.adapt{grid-template-columns:1fr}}
+.adapt .arrow{display:flex;align-items:center;justify-content:center;color:var(--primary-c)}
+.prob{background:#fff5f5;border:1px solid #ffc9c9;border-radius:8px;padding:14px}
+.prob .tag{background:#ffc9c9;color:#c92a2a}
+.prob b{font-size:12.5px;color:var(--t1);margin:9px 0;display:block;line-height:1.5}
+.prob p{font-size:10.5px;color:var(--t2);line-height:1.6;margin:0}
+.prob .kv{display:flex;gap:16px;margin-top:12px}
+.prob .kv div{font-size:10px;color:var(--t3)}
+.prob .kv b{display:block;font-family:var(--mono);font-size:13px;color:var(--emerald);margin-top:3px}
+.solution{background:var(--surface-low);border-radius:8px;padding:14px}
+.solution .tag{background:var(--primary-fixed);color:var(--primary)}
+.solution b{font-size:12.5px;color:var(--t1);margin:9px 0;display:block;line-height:1.5}
+.solution p{font-size:10.5px;color:var(--t2);margin:0;line-height:1.6}
+.solution .meta{display:flex;gap:12px;margin-top:11px;font-size:10px;color:var(--t3);flex-wrap:wrap}
+
+/* modal */
+.mask{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:100;align-items:center;justify-content:center;padding:16px}
+.mask.show{display:flex}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:600px;max-height:90vh;overflow:auto;box-shadow:var(--shadow-3)}
+.modal .mh{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)}
+.modal .mh h2{margin:0;font-size:17px;font-weight:600}
+.modal .mb{padding:20px 22px}
+.modal .mf{display:flex;justify-content:flex-end;gap:10px;padding:15px 22px;border-top:1px solid var(--border)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field.full{grid-column:1/-1}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--t2);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;border:1px solid #cbd5e1;border-radius:6px;padding:8px 10px;font-size:12.5px;color:var(--t1);background:#fff;font-family:inherit;outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary-c);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+.field textarea{min-height:60px;resize:vertical}
+.x{border:none;background:transparent;font-size:22px;color:var(--t3);line-height:1}
+.btn-line{height:36px;padding:0 14px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--t2);font-size:12.5px;font-weight:600}
+.btn-line:hover{background:var(--canvas)}
+
+/* toast / loading / empty */
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:var(--t1);color:#fff;padding:11px 20px;border-radius:9px;font-size:12.5px;opacity:0;pointer-events:none;transition:.25s;z-index:200;box-shadow:var(--shadow-3)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.loading{display:flex;align-items:center;justify-content:center;gap:10px;padding:40px;color:var(--t3);font-size:12px}
+.spin{width:16px;height:16px;border:2.5px solid var(--border);border-top-color:var(--primary-c);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.empty{display:none;text-align:center;color:var(--t4);padding:50px 20px;font-size:12.5px}
+.empty.show{display:block}
+
+@media(max-width:860px){
+  .sidebar{transform:translateX(-100%);transition:.25s}
+  .sidebar.open{transform:none}
+  .topbar,.main{margin-left:0;left:0}
+  .topbar{left:0}
+  .menu-btn{display:flex!important}
+}
+.menu-btn{display:none;width:34px;height:34px;align-items:center;justify-content:center;border:none;background:transparent;color:var(--t1)}
+</style>
+</head>
+<body>
+
+<!-- ===== SVG ICON SPRITE ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-logo" viewBox="0 0 24 24"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></symbol>
+<symbol id="i-kanban" viewBox="0 0 24 24"><rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="11" rx="1"/><rect x="17" y="4" width="4" height="14" rx="1"/></symbol>
+<symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M9 15c0-2-3-3-3-7a6 6 0 0 1 12 0c0 4-3 5-3 7z"/></symbol>
+<symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3M13 15h4"/></symbol>
+<symbol id="i-radar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/><path d="M12 12 19 5"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 1 2-2h13"/></symbol>
+<symbol id="i-checkdoc" viewBox="0 0 24 24"><path d="M9 3h6l4 4v14H5V3z"/><path d="m9 13 2 2 4-4"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></symbol>
+<symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></symbol>
+<symbol id="i-tune" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h10M18 18h2"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="16" cy="18" r="2"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-hub" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M6.5 6.5 10 10M17.5 6.5 14 10M6.5 17.5 10 14M17.5 17.5 14 14"/></symbol>
+<symbol id="i-balance" viewBox="0 0 24 24"><path d="M12 3v18M5 7h14M6 7l-3 6h6zM18 7l-3 6h6z"/></symbol>
+<symbol id="i-rocket" viewBox="0 0 24 24"><path d="M5 15c-1 2-1 4-1 4s2 0 4-1M9 15l-4-4c1-5 5-9 12-9 0 7-4 11-9 12z"/><circle cx="14.5" cy="9.5" r="1.5"/></symbol>
+<symbol id="i-pay" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></symbol>
+<symbol id="i-trend" viewBox="0 0 24 24"><path d="m3 17 6-6 4 4 8-8M15 7h6v6"/></symbol>
+<symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h5a4 4 0 0 0 4-4v-6"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+<symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10M15 10v10"/></symbol>
+<symbol id="i-calc" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M14 12h2M8 16h2M14 16h2"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+<symbol id="i-track" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3 8 8 10 5-2 8-5 8-10V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+<symbol id="i-cycle" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9 9 0 0 1 7 3M21 12a9 9 0 0 1-9 9 9 9 0 0 1-7-3"/><path d="M19 3v4h-4M5 21v-4h4"/></symbol>
+<symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M7 15h10"/></symbol>
+<symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 5h11l-2 4 2 4H5"/></symbol>
+<symbol id="i-code" viewBox="0 0 24 24"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></symbol>
+<symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 9v5M12 17h.01"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4zM22 2 11 13"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/></symbol>
+<symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+</defs></svg>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar" id="sidebar">
+  <div class="side-top">
+    <div class="brand">
+      <div class="mark"><svg class="ic"><use href="#i-logo"/></svg></div>
+      <div class="txt"><b>ProductForge</b><span>全生命周期协同工作台</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-title">核心流水线</div>
+      <a class="nav-item active" data-view="overview"><svg class="ic"><use href="#i-kanban"/></svg>流水线看板</a>
+      <a class="nav-item" data-view="strategy"><svg class="ic"><use href="#i-bulb"/></svg>灵感与战略</a>
+      <a class="nav-item" data-view="delivery"><svg class="ic"><use href="#i-terminal"/></svg>产研交付台</a>
+      <a class="nav-item" data-view="growth"><svg class="ic"><use href="#i-radar"/></svg>增长与调优</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-title" style="display:flex;justify-content:space-between">产品矩阵 (4) <svg class="ic sm" style="cursor:pointer"><use href="#i-dots"/></svg></div>
+      <div class="prod-item sel"><span class="dot" style="background:#4f46e5"></span>AI Agent 协同套件</div>
+      <div class="prod-item"><span class="dot" style="background:#94a3b8"></span>CloudFlow PaaS</div>
+      <div class="prod-item"><span class="dot" style="background:#94a3b8"></span>Matrix BI</div>
+      <div class="prod-item"><span class="dot" style="background:#94a3b8"></span>Nexa Mobile</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-title">工程协同</div>
+      <a class="nav-item"><svg class="ic"><use href="#i-book"/></svg>知识库 & SOP</a>
+      <a class="nav-item"><svg class="ic"><use href="#i-checkdoc"/></svg>工单与决策流</a>
+    </div>
+  </div>
+  <div class="side-bottom">
+    <div class="quota">
+      <div class="row"><span>工作台流水线配额</span><span class="mono">82%</span></div>
+      <div class="bar"><i style="width:82%"></i></div>
+      <div class="foot"><span>18 活跃实例</span><span>已达负载峰值</span></div>
+    </div>
+    <div class="profile">
+      <div class="avatar" style="background:linear-gradient(135deg,#4f46e5,#7048e8)">林</div>
+      <div class="who"><b>林晨 (Product Lead)</b><span><i></i>深度工作模式</span></div>
+      <svg class="ic sm muted" style="cursor:pointer"><use href="#i-tune"/></svg>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== TOPBAR ===== -->
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+    <button class="menu-btn" id="menuBtn"><svg class="ic lg"><use href="#i-kanban"/></svg></button>
+    <div class="crumb"><span>工作台</span><span>/</span><span class="cur" id="crumbCur">主工厂流水线</span></div>
+    <div class="topsearch">
+      <svg class="ic sm"><use href="#i-search"/></svg>
+      <input id="topSearch" type="text" placeholder="⌘K 搜索产品、PRD、决策记录或待办指标...">
+      <span class="kbd">⌘K</span>
+    </div>
+  </div>
+  <div class="stagechips" id="stageChips">
+    <span class="on"><i></i>灵感</span><span>规划</span><span>决策</span><span>设计</span><span>研发</span><span>落地</span><span>上线</span><span>运营</span><span>调优</span>
+  </div>
+  <div class="top-actions">
+    <button class="btn-primary" id="newBtn"><svg class="ic sm"><use href="#i-plus"/></svg>新建产品/灵感</button>
+    <button class="iconbtn"><svg class="ic"><use href="#i-bell"/></svg><span class="badge">3</span></button>
+    <button class="iconbtn"><svg class="ic"><use href="#i-help"/></svg></button>
+    <button class="iconbtn"><svg class="ic"><use href="#i-expand"/></svg></button>
+  </div>
+</header>
+
+<main class="main">
+<!-- ==================== VIEW 1: OVERVIEW ==================== -->
+<section class="view active" id="view-overview">
+  <div class="welcome">
+    <div>
+      <h1>下午好，林晨！产品工厂当前处于高能效运转状态 <span class="status"><i></i>流水线吞吐率 94.2%（高效）</span></h1>
+      <p>2025年05月22日 星期四 &nbsp;•&nbsp; 主集群运行正常，本周期产研节奏领先计划 1.8 个迭代周期</p>
+    </div>
+    <div class="tools">
+      <button class="btn-ghost"><svg class="ic sm"><use href="#i-tune"/></svg>看板视图配置</button>
+      <button class="btn-primary" id="createCardBtn"><svg class="ic sm"><use href="#i-layers"/></svg>创建全周期卡片</button>
+    </div>
+  </div>
+
+  <div class="kpis">
+    <div class="card kpi"><div class="top"><span class="cap">活跃产品总数</span><span class="ico" style="background:#e2dfff"><svg class="ic sm" style="color:#4f46e5"><use href="#i-hub"/></svg></span></div><div class="big" id="kpiTotal" data-sp-bindable="database" data-sp-database-id="wVFFcD0yitSnGLAl6TaVEo">—<small>个主线产品</small></div><div class="foot"><span class="good">+12 个孵化中功能</span><span class="mono">跨 9 阶段分布</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">本周关键决策</span><span class="ico" style="background:#dae2fd"><svg class="ic sm" style="color:#565e74"><use href="#i-balance"/></svg></span></div><div class="big">5<small>项待决断</small></div><div class="foot"><span class="good" style="color:#4f46e5">商业化立项 2 项</span><span class="mono">48h 内响应</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">交付冲刺进度 (Sprint 24)</span><span class="ico" style="background:#dce9ff"><svg class="ic sm" style="color:#00524b"><use href="#i-rocket"/></svg></span></div><div class="big">86.4%</div><div class="foot" style="gap:8px"><div class="bar" style="flex:1;margin:0"><i style="width:86%"></i></div><span class="mono">42/48 Task</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">全矩阵 MRR / ARR</span><span class="ico" style="background:#89f5e7"><svg class="ic sm" style="color:#00524b"><use href="#i-pay"/></svg></span></div><div class="big">¥482.5K<small>ARR ¥5.78M</small></div><div class="foot"><span class="good">↗ +18.4% MoM</span><span class="mono">续费率 97.2%</span></div></div>
+  </div>
+
+  <div class="card pad">
+    <div class="sechead">
+      <div class="left"><div class="ico"><svg class="ic"><use href="#i-route"/></svg></div><div><div class="h2">9 阶段全景流水线泳道图</div><p>贯穿灵感探索、决策投决、敏捷研发生态至运营调优的全局脉络</p></div></div>
+      <div class="segment"><button class="on">卡片视界</button><button>甘特流</button><button>吞吐速率</button></div>
+    </div>
+    <div class="ribbon"><div class="ribbon-wrap"><div class="ribbon-inner" id="ribbon"></div></div></div>
+    <div class="loading" id="boardLoading"><span class="spin"></span>正在加载流水线数据…</div>
+    <div class="empty" id="boardEmpty">暂无产品卡片，点击右上角「新建产品/灵感」开始。</div>
+    <div class="board" id="board"></div>
+  </div>
+
+  <div class="bento2">
+    <div class="card">
+      <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-warn"/></svg>今日关键行动与瓶颈卡点</div><span class="cap">实时 SLA 倒计时中</span></div>
+      <div class="mini-body">
+        <div class="alertbox"><div class="hd"><svg class="ic sm"><use href="#i-flask"/></svg>Matrix BI v2.4 灰度集群异常<span class="t">发生于 24 分钟前</span></div><div class="bd">放量到 30% 后，Pod 内存占用曲线陡增至 88% 阈值，怀疑存在未注销的大数据表 WebSocket 句柄泄漏。建议在今天 18:00 前决策是否推迟明日 100% 全量。</div><div class="actions"><button class="chipbtn">查看链路追踪</button><button class="chipbtn solid">召开应急研判会</button></div></div>
+        <div class="approve"><div class="row1"><b>待你签批：AI 协同套件 Q3 商业化立项方案</b><span class="rid">PRD-AI-202505</span></div><div class="cap" style="margin-top:4px">产品战略委员会 · RICE 评估得分 84.5（高回报率）</div><div class="stats3"><div class="st"><div class="k">预估投入周期</div><div class="v">6 冲刺</div></div><div class="st"><div class="k">预估首年 ARR 增量</div><div class="v g">+¥1.85M</div></div><div class="st"><div class="k">技术风险系数</div><div class="v">低</div></div></div><div class="actions" style="display:flex;gap:7px"><button class="chipbtn solid"><svg class="ic sm"><use href="#i-check"/></svg>批准立项准入</button><button class="chipbtn">要求补齐竞品调研</button><button class="chipbtn">审阅完整立项书</button></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-chart"/></svg>产品矩阵健康度</div><button class="chipbtn">查看分析台</button></div>
+      <div class="mini-body" id="healthList">
+        <div class="hrow"><div class="l"><b>CloudFlow PaaS</b><span class="good">98%</span></div><div class="d">研发中 · SLA 稳定性 99.98% · 负载正常</div><div class="bar" style="margin:0"><i style="width:98%;background:#059669"></i></div></div>
+        <div class="hrow"><div class="l"><b>Matrix BI</b><span class="bad">89%</span></div><div class="d">灰度放量 · 灰度告警 1 起 · 内存偏高</div><div class="bar" style="margin:0"><i style="width:89%;background:#e11d48"></i></div></div>
+        <div class="hrow"><div class="l"><b>AI Agent 协同套件</b><span style="font-family:var(--mono);font-size:12px;color:#059669;font-weight:600">95%</span></div><div class="d">商业决策 · 算法召回率 92.4% · 待签署</div><div class="bar" style="margin:0"><i style="width:95%;background:#4f46e5"></i></div></div>
+        <div class="hrow"><div class="l"><b>Nexa Mobile</b><span style="font-family:var(--mono);font-size:12px;color:#059669;font-weight:600">92%</span></div><div class="d">设计阶段 · 崩溃率 (Alpha) 0.12%</div><div class="bar" style="margin:0"><i style="width:92%;background:#0891b2"></i></div></div>
+        <div style="margin-top:14px"><div class="cap">产研工时产能分配矩阵 · 总计 480 人天/双周</div><div class="alloc"><i style="width:45%;background:#4f46e5"></i><i style="width:25%;background:#7048e8"></i><i style="width:18%;background:#0891b2"></i><i style="width:12%;background:#94a3b8"></i></div><div class="legend"><div><i style="background:#4f46e5"></i>新功能产研 45%</div><div><i style="background:#7048e8"></i>核心基座重构 25%</div><div><i style="background:#0891b2"></i>测试落地与合规 18%</div><div><i style="background:#94a3b8"></i>技术债务 12%</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-clock"/></svg>全工厂审计日志与 SOP 流转动态</div><button class="chipbtn"><svg class="ic sm"><use href="#i-tune"/></svg>筛选操作主体</button></div>
+    <div class="mini-body">
+      <div class="tl-item"><div class="av" style="background:#4f46e5">林</div><div class="c"><b>林晨 (Product Lead)</b><p>将卡片 <span class="mk">CloudFlow 2.0 PRD 终审</span> 推进至 <span class="mk">[战略决策 Stage]</span> · 已向战略委员分发审批抄送</p></div><div class="tm">12 分钟前</div></div>
+      <div class="tl-item"><div class="av" style="background:#0f172a">S</div><div class="c"><b>DevOps CI/CD 流水线</b><p>自动完成验收用例：<span class="mk">1,240 Passed / 0 Failed</span> · 发布镜像 matrix-bi-worker:2.4.0-rc3（4m 12s）</p></div><div class="tm">38 分钟前</div></div>
+      <div class="tl-item"><div class="av" style="background:#0891b2">王</div><div class="c"><b>王凯 (Senior UX)</b><p>关联 Figma 设计资产至工单 <span class="mk">Nexa Mobile 暗黑模式设计稿</span> · v1.3-stable · 16 个响应式断点视图</p></div><div class="tm">1 小时前</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 卡片字段结构声明:renderData 生成的每张产品卡片都遵循此结构 -->
+<template id="cardTpl"><article class="pcard">
+<div class="card-title"></div><span class="card-stage"></span><p class="card-desc"></p>
+<div class="card-audience"></div><span class="card-priority"></span><div class="card-owner"></div>
+<div class="card-risk"></div><div class="card-next"></div><div class="card-metric"></div>
+<span class="card-updated"></span>
+</article></template>
+
+<!-- ==================== VIEW 2: STRATEGY ==================== -->
+<section class="view" id="view-strategy">
+  <div class="card vhead">
+    <div class="eyebrow"><span class="tag">战略阶段：灵感孵化 & 立项决策</span><span class="mono">STAGE-01/09</span></div>
+    <h1>灵感孵化与战略决策中枢</h1>
+    <p>覆盖从闪念收集、痛点归因、机会雷达，到 RICE/Kano 价值评估与商业立项决策全链路。</p>
+    <div class="acts">
+      <button class="btn-ghost"><svg class="ic sm"><use href="#i-cal"/></svg>评审会议排期</button>
+      <button class="btn-ghost"><svg class="ic sm"><use href="#i-table"/></svg>导出商业模式画布</button>
+      <button class="btn-ghost"><svg class="ic sm"><use href="#i-checkdoc"/></svg>新建战略提案</button>
+      <button class="btn-primary"><svg class="ic sm"><use href="#i-plus"/></svg>捕捉新灵感</button>
+    </div>
+  </div>
+
+  <div class="bento3">
+    <div class="card">
+      <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-bulb"/></svg>灵感池闪念雷达</div><span class="pill" style="background:var(--surface-container);color:var(--primary)">28 个待评</span></div>
+      <div class="tabs"><button class="on">全部 (28)</button><button>用户原声 (12)</button><button>竞品动态 (8)</button><button>技术洞察 (5)</button></div>
+      <div class="mini-body">
+        <div class="idea"><div class="top"><span class="src" style="background:#e2dfff;color:#4f46e5">用户原声 · 高优先级</span><span class="vote">👍 34</span></div><b>私有部署轻量化方案</b><p>来自 14 家大型金融/能源企业客户的共性合规诉求，建议拆解进一季度规划。</p><div class="ai"><svg class="ic sm"><use href="#i-bulb"/></svg>AI 摘要：市场渗透率阻碍核心瓶颈 · 2h 前</div></div>
+        <div class="idea"><div class="top"><span class="src" style="background:#fff0f6;color:#c2255c">竞品动态 · 战略攻防</span><span class="vote">👍 21</span></div><b>实时协作白板内嵌算子</b><p>竞对 A 刚刚发布无代码画布集成，需核算对主工作台黏性的分流风险。</p><div class="ai"><svg class="ic sm"><use href="#i-bulb"/></svg>AI 摘要：防守型功能建议 · 昨天</div></div>
+        <div class="idea"><div class="top"><span class="src" style="background:#e6fcf5;color:#087f5b">技术洞察 · 前瞻探索</span><span class="vote">👍 18</span></div><b>端侧小模型代码自动修补</b><p>利用开源 3B 模型构建离线上下文修复，大幅缩减云端 API 调用 Token 成本。</p><div class="ai"><svg class="ic sm"><use href="#i-bulb"/></svg>AI 摘要：降本提效预研案 · 3天前</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-calc"/></svg>RICE 价值评估与排序矩阵</div><span class="cap">得分 =(R×I×C)/E</span></div>
+      <div class="mini-body">
+        <div style="background:var(--surface-low);border-radius:8px;padding:13px;margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span class="pill" style="background:#4f46e5;color:#fff">TOP 1</span><span class="cap">评审通过 · 准备流转</span></div>
+          <b style="display:block;font-size:12.5px;margin:9px 0;color:var(--t1)">工作流编排画布引擎</b>
+          <div style="display:flex;align-items:end;justify-content:space-between"><div><div class="cap">综合得分</div><div class="score-big">162.0</div></div><button class="chipbtn solid" style="background:#4f46e5;color:#fff;border-color:#4f46e5">一键提升至规划阶段 →</button></div>
+          <div class="RICE g4" style="margin-top:11px"><div class="cap">Reach<br><b class="mono-val">12,000</b> DAU</div><div class="cap">Impact<br><b class="mono-val">3.0</b> 高</div><div class="cap">Confidence<br><b class="mono-val">90%</b></div><div class="cap">Effort<br><b class="mono-val">2.0</b> 周</div></div>
+        </div>
+        <table><thead><tr><th>提案项名称</th><th>覆盖/影响</th><th>置信/工期</th><th>RICE</th></tr></thead><tbody>
+          <tr><td>#2 智能工单路由多维打标</td><td class="mono-val">8k / 2.5</td><td class="mono-val">80% / 1.5w</td><td class="mono-val" style="color:#4f46e5">106.6</td></tr>
+          <tr><td>#3 多租户审计日志增强组件</td><td class="mono-val">4.5k / 2.0</td><td class="mono-val">95% / 1.0w</td><td class="mono-val" style="color:#4f46e5">85.5</td></tr>
+          <tr><td>#4 移动端看板消息推流加速</td><td class="mono-val">15k / 1.0</td><td class="mono-val">70% / 2.5w</td><td class="mono-val" style="color:#4f46e5">42.0</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-track"/></svg>战略目标对齐度</div><span class="pill" style="background:#e6fcf5;color:#087f5b">Q3 推进中</span></div>
+      <div class="mini-body">
+        <div class="okr"><div class="t"><b>OKR 1 · 核心黏性</b><span>68% 对齐</span></div><div class="bar" style="margin:7px 0"><i style="width:68%;background:#4f46e5"></i></div><p>核心产品日常粘性提升 25%</p><div class="meta">当前贡献提案：5 项 · 目标增益 <span class="good">+18.4%</span></div></div>
+        <div class="okr"><div class="t"><b>OKR 2 · 商业化变现</b><span>84% 对齐</span></div><div class="bar" style="margin:7px 0"><i style="width:84%;background:#0891b2"></i></div><p>企业级平均客单价突破 15 万</p><div class="meta">当前贡献提案：3 项 · 目标客单 16.2 万</div></div>
+        <div style="margin-top:16px;background:var(--surface-low);border-radius:8px;padding:13px;display:flex;align-items:center;justify-content:space-between"><div><div class="cap">需求战略偏离度警告</div><b style="font-size:13px;color:var(--emerald)">0 偏离项</b></div><svg class="ic lg" style="color:#10b981"><use href="#i-shield"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-checkdoc"/></svg>CloudFlow 智能路由引擎商业立项案</div><div style="display:flex;gap:8px;align-items:center"><span class="mono muted" style="font-size:10px">BIZ-2024-089</span><span class="pill" style="background:#fff3bf;color:#e67700">投决会待签批</span></div></div>
+    <div class="mini-body">
+      <div class="cap" style="margin-bottom:12px">主导发起人：林晨 (Product Lead) · 提案评级：A级核心基础设施</div>
+      <div class="bento3">
+        <div style="background:var(--surface-low);border-radius:8px;padding:14px">
+          <div class="cap" style="margin-bottom:10px">财务模型测算 (Financial Projections)</div>
+          <div class="g2">
+            <div><div class="cap">新增预估 ARR</div><div style="font-family:var(--mono);font-size:19px;font-weight:600">¥2.40M</div><div class="good" style="font-size:9.5px">+34% vs Baseline</div></div>
+            <div><div class="cap">投资回收周期</div><div style="font-family:var(--mono);font-size:19px;font-weight:600">5.8 个月</div><div class="muted" style="font-size:9.5px">行业平均 9 个月</div></div>
+            <div><div class="cap">研发资源投入</div><div style="font-family:var(--mono);font-size:19px;font-weight:600">36 人月</div><div class="muted" style="font-size:9.5px">含核心引擎 3 人</div></div>
+            <div><div class="cap">内含报酬率 (IRR)</div><div style="font-family:var(--mono);font-size:19px;font-weight:600;color:#059669">42.8%</div><div class="muted" style="font-size:9.5px">高投资价值</div></div>
+          </div>
+        </div>
+        <div style="background:var(--surface-low);border-radius:8px;padding:14px">
+          <div class="cap" style="margin-bottom:10px">预期 ARR 增长曲线 (18个月展望)</div>
+          <svg class="chartbox" viewBox="0 0 300 120" preserveAspectRatio="none"><defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f46e5" stop-opacity=".22"/><stop offset="1" stop-color="#4f46e5" stop-opacity="0"/></linearGradient></defs><path d="M0 108 C60 104,100 92,150 74 C200 56,250 30,300 10 L300 120 L0 120Z" fill="url(#ag)"/><path d="M0 108 C60 104,100 92,150 74 C200 56,250 30,300 10" fill="none" stroke="#4f46e5" stroke-width="2"/><circle cx="150" cy="74" r="3" fill="#4f46e5"/><text x="120" y="68" font-size="8" fill="#64748b">M6 盈亏平衡</text><text x="255" y="22" font-size="8" fill="#4f46e5">M18 ¥2.4M</text></svg>
+          <div class="flex" style="display:flex;justify-content:space-between;font-size:9px;color:var(--t4);font-family:var(--mono)"><span>Q3 立项</span><span>Q4 灰度</span><span>Q1 商用</span><span>Q2 峰值</span></div>
+        </div>
+        <div style="background:var(--surface-low);border-radius:8px;padding:14px">
+          <div class="cap" style="margin-bottom:10px">投决会评审表决进度 · 3 赞成 / 1 待定</div>
+          <div class="ui-row" style="padding:7px 0"><div class="avatar" style="width:24px;height:24px;background:#4f46e5;font-size:9px">张</div><div class="body"><b>张建 (CTO)</b></div><span class="pill" style="background:#e6fcf5;color:#087f5b">✓ 同意立项</span></div>
+          <div class="ui-row" style="padding:7px 0"><div class="avatar" style="width:24px;height:24px;background:#7048e8;font-size:9px">何</div><div class="body"><b>何珊 (CPO)</b></div><span class="pill" style="background:#e6fcf5;color:#087f5b">✓ 同意立项</span></div>
+          <div class="ui-row" style="padding:7px 0"><div class="avatar" style="width:24px;height:24px;background:#0891b2;font-size:9px">杜</div><div class="body"><b>杜海 (商业化 VP)</b></div><span class="pill" style="background:#e6fcf5;color:#087f5b">✓ 同意立项</span></div>
+          <div class="ui-row" style="padding:7px 0"><div class="avatar" style="width:24px;height:24px;background:#e67700;font-size:9px">周</div><div class="body"><b>周敏 (财务总监)</b></div><span class="pill" style="background:#fff3bf;color:#e67700">待定：补税务核算</span></div>
+          <button class="chipbtn solid" style="width:100%;justify-content:center;margin-top:10px;background:#4f46e5;color:#fff;border-color:#4f46e5"><svg class="ic sm"><use href="#i-check"/></svg>正式签批立项并流入规划阶段</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== VIEW 3: DELIVERY ==================== -->
+<section class="view" id="view-delivery">
+  <div class="card vhead">
+    <div class="eyebrow"><span class="tag" style="background:#e6fcf5;color:#087f5b">DELIVERY-HUB-NODE-04</span><span class="mono" style="color:#059669">● 实时双向同步中</span></div>
+    <h1>产研落地与交付控制台</h1>
+    <p>衔接 PRD 规划、UI/UX 设计评审、研发 Sprint 冲刺与发布前全项验收 Checklist。</p>
+    <div class="acts">
+      <button class="btn-ghost"><svg class="ic sm"><use href="#i-flag"/></svg>目标冲刺 · Sprint 2024-W38（剩 4 天）</button>
+      <button class="btn-ghost"><svg class="ic sm"><use href="#i-code"/></svg>同步 GitLab/PR</button>
+      <button class="btn-primary"><svg class="ic sm"><use href="#i-plus"/></svg>发起交付验收</button>
+    </div>
+  </div>
+
+  <div class="bento2">
+    <div class="card">
+      <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-flag"/></svg>设计走查与规格基线</div><span class="cap">STAGE 04/09</span></div>
+      <div class="mini-body">
+        <div style="background:var(--surface-low);border-radius:8px;padding:13px;margin-bottom:12px"><div class="cap">当前主焦点特性</div><b style="display:block;font-size:13px;margin:6px 0;color:var(--t1)">多维交叉透视表组件</b><div style="display:flex;gap:8px;align-items:center"><span class="mono muted" style="font-size:10px">PRD-109</span><span class="pill" style="background:#e2dfff;color:#4f46e5">PRD 已封板 v2.4.1</span><span class="muted" style="font-size:10px">修订于 09-18</span></div></div>
+        <div class="g2" style="margin-bottom:12px">
+          <div style="border:1px solid var(--border);border-radius:8px;padding:12px"><div class="cap">用户故事与极值用例 (4 条)</div><p style="font-size:10.5px;color:var(--t2);line-height:1.5;margin:8px 0 0">US-1：行维度 &gt;50 级嵌套时启用虚拟视口平滑滚动。<br>EDGE：跨年聚合空值渲染 "--" 并智能降阶填补。</p></div>
+          <div style="border:1px solid var(--border);border-radius:8px;padding:12px"><div class="cap">UI/UX 交互规范交付</div><div style="font-family:var(--mono);font-size:24px;font-weight:500;margin:8px 0 0;color:var(--emerald)">28/28</div><div class="muted" style="font-size:10px">规约 · 评审通过页面</div><div class="good" style="font-size:10px;margin-top:4px">✓ 100% 验收达标</div></div>
+        </div>
+        <div class="cap" style="margin-bottom:6px">设计规格走查清单 · 16/16 完成</div>
+        <div class="check"><div class="bx" style="background:#e6fcf5;color:#087f5b"><svg class="ic sm"><use href="#i-check"/></svg></div><div class="c"><b>暗黑模式匹配</b><p>全量组件已映射 Design Token</p></div></div>
+        <div class="check"><div class="bx" style="background:#e6fcf5;color:#087f5b"><svg class="ic sm"><use href="#i-check"/></svg></div><div class="c"><b>8 种断点响应式</b><p>Mobile → 4K 全断点验证通过</p></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-chart"/></svg>研发冲刺状态与流水线</div><span class="cap">GIT PR VELOCITY: HIGH</span></div>
+      <div class="mini-body">
+        <div style="display:flex;align-items:end;justify-content:space-between;margin-bottom:10px"><div><div class="cap">Sprint 燃尽图轨迹 (Burndown)</div><div style="font-family:var(--mono);font-size:26px;font-weight:500;margin-top:4px">14 <span style="font-size:12px;color:var(--t3)">Story Points 剩余</span></div></div><span class="pill" style="background:#e6fcf5;color:#087f5b">-18.4% 优于基准</span></div>
+        <svg class="chartbox" viewBox="0 0 300 120" preserveAspectRatio="none"><defs><linearGradient id="bg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#059669" stop-opacity=".16"/><stop offset="1" stop-color="#059669" stop-opacity="0"/></linearGradient></defs><path d="M0 12 L300 105 L300 120 L0 120Z" fill="url(#bg2)"/><path d="M0 12 L300 105" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 3" fill="none"/><path d="M0 12 C70 30,120 42,160 62 C210 82,260 96,300 105" fill="none" stroke="#059669" stroke-width="2.5"/><circle cx="180" cy="72" r="4" fill="#059669" stroke="#fff" stroke-width="2"/><text x="185" y="66" font-size="8" fill="#059669">Today 14pt</text></svg>
+        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--t4);margin-bottom:14px"><span>Day 1 (48pt)</span><span>Day 5 (32pt)</span><span>Today (14pt)</span><span>Target 0</span></div>
+        <div style="display:flex;gap:8px;margin-bottom:10px"><span class="pill" style="background:#e6fcf5;color:#087f5b">✓ Build #4910 GREEN · 84.6% 覆盖</span></div>
+        <div class="cap" style="margin-bottom:6px">当前攻坚卡片 · 3 项推进中</div>
+        <div class="check"><div class="bx" style="background:#e2dfff;color:#4f46e5"><svg class="ic sm"><use href="#i-code"/></svg></div><div class="c"><b>计算引擎 WebAssembly 模块编译加速</b><p>git:8ef2a · 经办人 张工 · 80%</p></div><span class="st" style="background:#e2dfff;color:#4f46e5">研发中</span></div>
+        <div class="check"><div class="bx" style="background:#e6fcf5;color:#087f5b"><svg class="ic sm"><use href="#i-check"/></svg></div><div class="c"><b>大数据量导出 Excel 内存溢出修复</b><p>压力用例 100万行×24列 · TC-390 Passed</p></div><span class="st" style="background:#e6fcf5;color:#087f5b">QA 98%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-checkdoc"/></svg>上线准入门禁 (Gatekeeper)</div><div style="display:flex;gap:8px;align-items:center"><span class="cap">STAGE 06/09</span><span class="pill" style="background:#e2dfff;color:#4f46e5">综合就绪 85.7%</span></div></div>
+    <div class="mini-body">
+      <p class="muted" style="font-size:11px;margin:0 0 10px">剩余 1 项非阻断警示需签字确认，1 项文档收尾即可开放 Staging 准入。</p>
+      <div class="bento2">
+        <div>
+          <div class="check"><div class="bx" style="background:#e6fcf5;color:#087f5b"><svg class="ic sm"><use href="#i-check"/></svg></div><div class="c"><b>性能基准测试达标</b><p>P99 查询延迟稳定在 142ms (&lt;180ms 阈值)</p></div><span class="st" style="background:#e6fcf5;color:#087f5b">PASS</span></div>
+          <div class="check"><div class="bx" style="background:#e6fcf5;color:#087f5b"><svg class="ic sm"><use href="#i-check"/></svg></div><div class="c"><b>数据安全与合规审计</b><p>脱敏规则、RBAC 细粒度审计日志无漏洞</p></div><span class="st" style="background:#e6fcf5;color:#087f5b">PASS</span></div>
+          <div class="check"><div class="bx" style="background:#e6fcf5;color:#087f5b"><svg class="ic sm"><use href="#i-check"/></svg></div><div class="c"><b>灰度环境数据迁移脚本演练</b><p>零停机迁移通过预演，双写校验无误</p></div><span class="st" style="background:#e6fcf5;color:#087f5b">PASS</span></div>
+          <div class="check"><div class="bx" style="background:#fff3bf;color:#e67700"><svg class="ic sm"><use href="#i-warn"/></svg></div><div class="c"><b>回滚预案与降级演练</b><p>SRE 负责人 (李工) 正在核验回滚快照命令</p></div><span class="st" style="background:#fff3bf;color:#e67700">待签字</span></div>
+          <div class="check"><div class="bx" style="background:var(--canvas);color:#94a3b8"><svg class="ic sm"><use href="#i-clock"/></svg></div><div class="c"><b>客户成功与售前知识库更新</b><p>v2.4 功能发布手册需同步统一知识库</p></div><span class="st" style="background:var(--canvas);color:#94a3b8">PENDING</span></div>
+          <button class="chipbtn solid" style="width:100%;justify-content:center;margin-top:10px;background:#4f46e5;color:#fff;border-color:#4f46e5"><svg class="ic sm"><use href="#i-rocket"/></svg>批准进入预发布 Staging 阶段</button>
+        </div>
+        <div style="background:var(--surface-low);border-radius:8px;padding:14px"><div class="cap" style="margin-bottom:10px">当前授权签核</div><div class="profile" style="padding:4px 0"><div class="avatar" style="background:#4f46e5">林</div><div class="who"><b>林晨 (Product Lead)</b><span>HASH: 99a0f4</span></div></div><div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px"><div class="cap">门禁通过率</div><div style="font-family:var(--mono);font-size:34px;font-weight:500;color:#059669;margin-top:4px">85.7%</div><div class="bar" style="margin-top:6px"><i style="width:85.7%;background:#059669"></i></div><p class="muted" style="font-size:10.5px;margin-top:10px">6/7 项验收通过 · 1 项非阻断警示 · 1 项文档收尾</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-hub"/></svg>全链路端到端血缘追溯</div><span class="pill" style="background:#e6fcf5;color:#087f5b">双向可信校验 · 100% 链路闭环</span></div>
+    <div class="mini-body"><div class="trace">
+      <div class="tr-step"><div class="no">01 · 灵感发现</div><svg class="ic lg"><use href="#i-bulb"/></svg><b>IDEA #802</b><p>KA客户提报"海量行交叉分析卡顿，需秒级响应"</p><div class="dt">来源: 客户访谈 · 08-12</div></div>
+      <div class="tr-step"><div class="no">02 · 需求规约</div><svg class="ic lg"><use href="#i-checkdoc"/></svg><b>PRD-109</b><p>多维交叉透视表规范与行列动态聚合交互</p><div class="dt">已封板 v2.4.1 · 08-28</div></div>
+      <div class="tr-step"><div class="no">03 · 设计走查</div><svg class="ic lg"><use href="#i-layers"/></svg><b>FIGMA-42</b><p>28 页全规格交互走查稿件（Design Tokens 已映射）</p><div class="dt">可用性合格 · 09-04</div></div>
+      <div class="tr-step"><div class="no">04 · 研发提交</div><svg class="ic lg"><use href="#i-code"/></svg><b>COMMIT 8ef2a</b><p>feat(wasm): 编译向量化聚合计算内核并打通 PRD-109</p><div class="dt">PR #1402 合并 · 09-14</div></div>
+      <div class="tr-step"><div class="no">05 · 验证用例</div><svg class="ic lg"><use href="#i-check"/></svg><b>TEST TC-390</b><p>百万行交叉渲染压测与内存快照自动化断言通过</p><div class="dt">验收闭环 · Today</div></div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ==================== VIEW 4: GROWTH ==================== -->
+<section class="view" id="view-growth">
+  <div class="card vhead">
+    <div class="eyebrow"><span class="tag" style="background:#ecfeff;color:#0891b2">STAGE 09 · Dynamic Growth Radar</span></div>
+    <h1>运营增长与动态策略调优雷达</h1>
+    <p>闭环跟踪推广获客转化、留存漏斗、A/B 实验归因，并动态反馈调整产品战略与敏捷交付规划。</p>
+    <div class="acts">
+      <button class="btn-ghost"><svg class="ic sm"><use href="#i-hub"/></svg>全矩阵聚合视图</button>
+      <button class="btn-ghost"><svg class="ic sm"><use href="#i-cal"/></svg>近 30 天 (08.15 - 09.15)</button>
+      <button class="btn-ghost"><svg class="ic sm"><use href="#i-flask"/></svg>新建 A/B 实验</button>
+      <button class="btn-primary"><svg class="ic sm"><use href="#i-cycle"/></svg>触发策略反馈闭环</button>
+    </div>
+  </div>
+
+  <div class="gmetrics">
+    <div class="card kpi"><div class="top"><span class="cap">获客转化漏斗</span><span class="pill" style="background:#e6fcf5;color:#087f5b">-12.4% CAC</span></div><div class="big">¥142.50<small>/ 付费用户成本</small></div><div class="foot"><span class="muted">总曝光 142.0k</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">留存与净收入增幅</span><span class="pill" style="background:#e6fcf5;color:#087f5b">NDR 优异</span></div><div class="big">118.2%<small>净收入留存率</small></div><div class="foot"><span class="muted">LTV/CAC 4.3x（稳健）</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">A/B 实验流控矩阵</span><span class="pill" style="background:#e2dfff;color:#4f46e5">2 项显著胜出</span></div><div class="big">6<small>/ 8 进行中实验</small></div><div class="foot"><span class="good">新版 Onboarding 次日留存 +14.2%</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">策略动态反哺率</span><svg class="ic sm" style="color:#0891b2"><use href="#i-cycle"/></svg></div><div class="big">18 条<small>洞察注入灵感规划池</small></div><div class="foot"><span class="good">85% 已采纳 · 缩短试错 14 天</span></div></div>
+  </div>
+
+  <div class="card">
+    <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-chart"/></svg>多渠道获客效能与 ROI 归因矩阵</div><span class="cap">归因模型：W型多触点归因</span></div>
+    <div class="mini-body">
+      <table><thead><tr><th>获客渠道名称</th><th>新增试用</th><th>付费转化率</th><th>综合 CAC</th><th>投资回报 ROI</th><th>健康状态</th></tr></thead><tbody>
+        <tr><td><b style="color:var(--t1)">开发者社区裂变 & 开源插件</b><br><span class="muted" style="font-size:9.5px">GitHub, Discord, Dev.to</span></td><td class="mono-val">4,890</td><td class="mono-val">11.4%</td><td class="mono-val">¥68.0</td><td class="mono-val" style="color:#059669">5.6x ROI</td><td><span class="pill" style="background:#e6fcf5;color:#087f5b">高价值扩容</span></td></tr>
+        <tr><td><b style="color:var(--t1)">SEO 矩阵与深度内容营销</b><br><span class="muted" style="font-size:9.5px">技术白皮书、SOP 案例库</span></td><td class="mono-val">3,420</td><td class="mono-val">9.1%</td><td class="mono-val">¥94.0</td><td class="mono-val" style="color:#059669">4.8x ROI</td><td><span class="pill" style="background:#e6fcf5;color:#087f5b">平稳复利</span></td></tr>
+        <tr><td><b style="color:var(--t1)">行业技术峰会与私董会沙龙</b><br><span class="muted" style="font-size:9.5px">线上 Webinar 与线下展位</span></td><td class="mono-val">1,650</td><td class="mono-val">7.8%</td><td class="mono-val">¥210.0</td><td class="mono-val" style="color:#e67700">3.2x ROI</td><td><span class="pill" style="background:#fff3bf;color:#e67700">大客户破冰</span></td></tr>
+        <tr><td><b style="color:var(--t1)">效果类精准竞价广告</b><br><span class="muted" style="font-size:9.5px">Search Ads, 信息流直投</span></td><td class="mono-val">2,520</td><td class="mono-val">5.2%</td><td class="mono-val">¥290.0</td><td class="mono-val" style="color:#e03131">2.1x ROI</td><td><span class="pill" style="background:#fff0f6;color:#c2255c">需预算压缩</span></td></tr>
+      </tbody></table>
+      <div class="insight" style="margin-top:14px"><div class="t"><svg class="ic sm"><use href="#i-bulb"/></svg>战略洞察：开发者生态裂变具备压倒性韧性</div><p>开发者社区裂变获取的用户 LTV 最高，其 60 天留存稳定性达普通效果投放渠道的 <b>2.4 倍</b>。建议削减 20% 效果竞价预算，转投至「开发者 CLI 生态及开源沙箱扩展」。</p></div>
+    </div>
+  </div>
+
+  <div class="bento2">
+    <div class="card">
+      <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-flask"/></svg>A/B 实验监控与置信度雷达</div><span class="cap">贝叶斯检验 · 实时采样流</span></div>
+      <div class="mini-body">
+        <div class="exp"><div class="top"><span class="eid">EXP-204</span><span class="win">✓ 置信度 99.2%</span></div><b>付费方案定价卡片双列 vs 三列</b><div class="cs">样本量 45,200 UV · 观测周期 14 天（已达收敛）</div><div class="vars"><div class="var">Base A：转化率 <span class="vc">4.1%</span></div><div class="var" style="background:#ebfbee">Variant B：转化率 <span class="vc" style="color:#059669">5.8%</span> · ARPU +21.4%</div></div><button class="chipbtn solid" style="width:100%;justify-content:center;margin-top:10px;background:#059669;color:#fff;border-color:#059669">一键全量发布并归档</button></div>
+        <div class="exp"><div class="top"><span class="eid">EXP-209</span><span class="pill" style="background:#fff3bf;color:#e67700">置信度 78.0%</span></div><b>首页 AI Copilot 引导气泡唤起时机</b><div class="cs">样本量 18,600 UV · 观测周期 4 天 / 计划 7 天 · +4.2%（积累中）</div><div style="margin-top:9px;font-size:10px;color:var(--t3)">采样误差范围 ±3.8% · 需再观测 3 天</div><button class="chipbtn" style="width:100%;justify-content:center;margin-top:9px">配置实验流量比</button></div>
+        <div class="cap" style="margin-top:10px">全域防干扰隔离机制：已生效 · <span style="color:#4f46e5">查看全部 6 项实验数据 →</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-cycle"/></svg>动态调整策略决策闭环</div><span class="pill" style="background:#e6fcf5;color:#087f5b">自愈闭环通道已连通</span></div>
+      <div class="mini-body">
+        <div class="adapt">
+          <div class="prob"><span class="pill tag">高危异损预警 #ANOMALY-882</span><b>中大型客户在第 7 天使用自定义集成功能时流失率突增 35%</b><p>跨团队 Session Replay 显示，用户在配置 Webhook 与 SSO 鉴权时，因 API 密钥调试缺乏即时沙箱反馈（Missing Playground），产生超 4 次控制台报错后放弃配置并触发流失。</p><div class="kv"><div>受影响客群<b>企业版 ARR ¥50k+</b></div><div>潜在挽回预期<b>+22% 转化</b></div></div></div>
+          <div class="arrow"><svg class="ic lg" style="width:26px;height:26px"><use href="#i-arrow"/></svg></div>
+          <div class="solution"><span class="pill tag">系统已合成战略反馈建议工单 · P0</span><b>需求立项：全新 API 交互式即时调试沙箱 (Developer Playground)</b><p>指派目标：第 1 阶段 [灵感与战略池]。为开发者控制台提供实时 Mock 调试面板，内置 Curl 生成与即时响应反馈，消除密钥生成试错盲区。</p><div class="meta"><span>预估 12 人日</span><span>云原生生态组</span><span>OKR Q3 开发者体验</span></div><button class="chipbtn solid" style="width:100%;justify-content:center;margin-top:12px;background:#4f46e5;color:#fff;border-color:#4f46e5"><svg class="ic sm"><use href="#i-send"/></svg>确认采纳并推送至规划流程</button></div>
+        </div>
+        <div class="cap" style="margin-top:16px;margin-bottom:8px">近期由增长雷达反哺成功的产品演进记录 (4)</div>
+        <div class="check"><div class="bx" style="background:#e6fcf5;color:#087f5b"><svg class="ic sm"><use href="#i-check"/></svg></div><div class="c"><b>邀请队友一键批量导入 (CSV/Slack)</b><p>由 Day-7 激活断崖反哺 → 已在 v2.4 交付发布 · 团队席位 +32%</p></div></div>
+        <div class="check"><div class="bx" style="background:#e6fcf5;color:#087f5b"><svg class="ic sm"><use href="#i-check"/></svg></div><div class="c"><b>多币种自动化 Stripe 结算通道</b><p>由海外支付失败率归因 → 阶段 06 · 海外丢单率 19% → 1.8%</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+</main>
+
+<!-- MODAL -->
+<div class="mask" id="mask"><div class="modal" role="dialog" aria-modal="true">
+  <div class="mh"><h2 id="modalTitle">新建产品 / 灵感</h2><button class="x" id="closeBtn" aria-label="关闭">×</button></div>
+  <form id="form"><div class="mb"><div class="grid2">
+    <div class="field"><label>产品名称 *</label><input name="pname" maxlength="80" required></div>
+    <div class="field"><label>当前阶段 *</label><select name="stage" id="f_stage" required><option value="">请选择</option></select></div>
+    <div class="field full"><label>一句话定位</label><input name="desc" maxlength="200" placeholder="用一句话说清它是什么、创造什么价值"></div>
+    <div class="field"><label>负责人</label><input name="owner" maxlength="40"></div>
+    <div class="field"><label>优先级</label><select name="priority" id="f_priority"><option value="">请选择</option></select></div>
+    <div class="field"><label>目标用户</label><input name="audience" maxlength="120"></div>
+    <div class="field"><label>最近更新</label><input name="updated" type="date"></div>
+    <div class="field full"><label>关键假设与风险</label><textarea name="risk" maxlength="500"></textarea></div>
+    <div class="field full"><label>下一步行动</label><textarea name="next" maxlength="500"></textarea></div>
+    <div class="field full"><label>核心指标</label><input name="metric" maxlength="200" placeholder="如：P1 · 完成度 90%"></div>
+  </div></div>
+  <div class="mf"><button type="button" class="btn-line" id="cancelBtn">取消</button><button type="submit" class="btn-primary" id="submitBtn">保存</button></div>
+  </form>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  /* ---------- view switching (works without SDK) ---------- */
+  var VIEWS={overview:'主工厂流水线',strategy:'灵感与战略',delivery:'产研交付台',growth:'增长与调优'};
+  var navs=document.querySelectorAll('.nav-item[data-view]');
+  function switchView(name){
+    var vs=document.querySelectorAll('.view');
+    for(var i=0;i<vs.length;i++) vs[i].classList.remove('active');
+    var target=document.getElementById('view-'+name);
+    if(target) target.classList.add('active');
+    for(var j=0;j<navs.length;j++) navs[j].classList.toggle('active',navs[j].getAttribute('data-view')===name);
+    document.getElementById('crumbCur').textContent=VIEWS[name]||'主工厂流水线';
+    var sb=document.getElementById('sidebar'); if(sb) sb.classList.remove('open');
+    window.scrollTo(0,0);
+  }
+  for(var n=0;n<navs.length;n++){
+    (function(el){ el.addEventListener('click',function(e){ e.preventDefault(); switchView(el.getAttribute('data-view')); }); })(navs[n]);
+  }
+  var menuBtn=document.getElementById('menuBtn');
+  if(menuBtn) menuBtn.addEventListener('click',function(){ document.getElementById('sidebar').classList.toggle('open'); });
+
+  /* ---------- SDK guard ---------- */
+  var smart=(typeof window!=='undefined' && typeof window.__SMART_PAGE__!=='undefined')?window.__SMART_PAGE__:null;
+  if(!smart || !smart.database){
+    var bl=document.getElementById('boardLoading'); if(bl) bl.style.display='none';
+    var bd=document.getElementById('board');
+    if(bd) bd.innerHTML='<div class="card pad muted" style="width:100%">当前环境未加载数据服务，4 个视图的静态内容可正常浏览；流水线看板的产品数据需在资料库页面中启用。</div>';
+    return;
+  }
+  var db=smart.database;
+  var DATABASE_ID='wVFFcD0yitSnGLAl6TaVEo';
+  var STAGES=[
+    {t:'灵感',c:'#8b5cf6',bg:'#f5f3ff'},{t:'产品规划',c:'#0284c7',bg:'#f0f9ff'},
+    {t:'战略决策',c:'#d97706',bg:'#fffbeb'},{t:'产品设计',c:'#e11d48',bg:'#fff1f2'},
+    {t:'产品开发',c:'#059669',bg:'#ecfdf5'},{t:'产品落地',c:'#0d9488',bg:'#f0fdfa'},
+    {t:'产品上线',c:'#4f46e5',bg:'#eef2ff'},{t:'推广运营',c:'#ea580c',bg:'#fff7ed'},
+    {t:'动态调整',c:'#0891b2',bg:'#ecfeff'}
+  ];
+  var PRIOS=[{t:'高',c:'#e03131',bg:'#fff0f0'},{t:'中',c:'#e67700',bg:'#fff9e6'},{t:'低',c:'#2b8a3e',bg:'#ebfbee'}];
+  var SCHEMA_OPTIONS={}, ALL=[], editingId='', toastTimer=null;
+  var form=document.getElementById('form'), mask=document.getElementById('mask');
+
+  function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove('show');},2200);}
+  function clear(el){while(el&&el.firstChild)el.removeChild(el.firstChild);}
+  function txt(v){return v==null?'':String(v);}
+  function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=String(text);return e;}
+  function bound(tag,cls,value){var e=el(tag,cls,value);e.setAttribute('data-sp-bindable','database');e.setAttribute('data-sp-database-id',DATABASE_ID);return e;}
+  function icon(id,cls){var s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('class','ic'+(cls?' '+cls:''));var u=document.createElementNS('http://www.w3.org/2000/svg','use');u.setAttribute('href','#'+id);s.appendChild(u);return s;}
+  function stageInfo(t){for(var i=0;i<STAGES.length;i++)if(STAGES[i].t===t)return STAGES[i];return STAGES[0];}
+  function prioInfo(t){for(var i=0;i<PRIOS.length;i++)if(PRIOS[i].t===t)return PRIOS[i];return null;}
+  function optText(field,val){var o=SCHEMA_OPTIONS[field]||[];for(var i=0;i<o.length;i++)if(o[i].id===val||o[i].text===val)return o[i].text;return txt(val);}
+  function stageList(){var o=SCHEMA_OPTIONS['当前阶段'];return(o&&o.length)?o:STAGES;}
+  function prioList(){var o=SCHEMA_OPTIONS['优先级'];return(o&&o.length)?o:PRIOS;}
+
+  /* ---- local draft cache ---- */
+  var DRAFT='pf_v2_draft';
+  function cacheDraft(){try{var d={},names=['pname','stage','desc','audience','priority','owner','risk','next','metric','updated'];for(var i=0;i<names.length;i++){var e=form.querySelector('[name="'+names[i]+'"]');if(e)d[names[i]]=e.value;}localStorage.setItem(DRAFT,JSON.stringify(d));}catch(e){}}
+  function refillDraft(){try{var r=localStorage.getItem(DRAFT);if(!r)return;var d=JSON.parse(r),names=['pname','stage','desc','audience','priority','owner','risk','next','metric','updated'];for(var i=0;i<names.length;i++){if(d[names[i]]==null)continue;var e=form.querySelector('[name="'+names[i]+'"]');if(e)e.value=d[names[i]];}}catch(e){}}
+  function clearDraft(){try{localStorage.removeItem(DRAFT);}catch(e){}}
+
+  function renderSelects(){
+    var s1=document.getElementById('f_stage'),s2=document.getElementById('f_priority');
+    clear(s1);clear(s2);
+    var p=el('option','','请选择');p.value='';s1.appendChild(p);s2.appendChild(p.cloneNode(true));
+    var st=stageList();for(var i=0;i<st.length;i++){var o=el('option','',st[i].text);o.value=st[i].id;s1.appendChild(o);}
+    var pr=prioList();for(var j=0;j<pr.length;j++){var q=el('option','',pr[j].text);q.value=pr[j].id;s2.appendChild(q);}
+  }
+
+  db.getSchema({databaseId:DATABASE_ID}).then(function(schema){
+    var props=(schema&&schema.properties)||[];
+    for(var i=0;i<props.length;i++){var f=props[i];if((f.type==='select'||f.type==='multi_select')&&f.config&&f.config.options)SCHEMA_OPTIONS[f.name]=f.config.options;}
+  }).catch(function(e){console.error('[db] schema:',e);})
+    .then(function(){renderSelects();refillDraft();loadData();});
+
+  function loadData(startCursor,acc,guard){
+    acc=acc||[];guard=guard||0;
+    if(guard>100){renderData(acc);return;}
+    try{
+      db.query({databaseId:DATABASE_ID,pageSize:200,startCursor:startCursor}).then(function(res){
+        acc=acc.concat(res.results||[]);
+        var next=res.nextCursor;
+        if(res.hasMore&&next&&next!==startCursor&&(res.results||[]).length)loadData(next,acc,guard+1);
+        else renderData(acc);
+      }).catch(function(e){console.error('[db] query:',e);var l=document.getElementById('boardLoading');if(l)l.style.display='none';toast('数据加载失败，请刷新重试');});
+    }catch(e){console.error('[db] query:',e);toast('数据加载失败');}
+  }
+
+  function renderRibbon(){
+    var r=document.getElementById('ribbon');clear(r);
+    var counts={};for(var i=0;i<ALL.length;i++){var t=optText('当前阶段',ALL[i]['当前阶段']);counts[t]=(counts[t]||0)+1;}
+    for(var s=0;s<STAGES.length;s++){
+      var info=STAGES[s],c=counts[info.t]||0;
+      var d=el('div','rb'+(s===0?' on':''));
+      var dot=el('span','dot');dot.style.background=info.c;d.appendChild(dot);
+      d.appendChild(el('span','',(s+1)+'. '+shortStage(info.t)+' ('+c+')'));
+      r.appendChild(d);
+    }
+  }
+  function shortStage(t){return {'产品规划':'规划','战略决策':'决策','产品设计':'设计','产品开发':'研发','产品落地':'落地','产品上线':'上线','推广运营':'运营','动态调整':'调优'}[t]||t;}
+
+  function renderData(rows){
+    ALL=rows||[];
+    var l=document.getElementById('boardLoading');if(l)l.style.display='none';
+    var kpi=document.getElementById('kpiTotal');kpi.textContent=ALL.length+' ';kpi.appendChild(el('small','','个主线产品'));kpi.setAttribute('data-sp-bindable','database');kpi.setAttribute('data-sp-database-id',DATABASE_ID);
+    renderRibbon();
+    var board=document.getElementById('board');clear(board);
+    var empty=document.getElementById('boardEmpty');
+    if(ALL.length===0){empty.classList.add('show');return;}else empty.classList.remove('show');
+    for(var s=0;s<STAGES.length;s++){
+      var info=STAGES[s];
+      var col=el('div','col');
+      var ch=el('div','colhead');var nm=el('div','name');var dot=el('span','dot');dot.style.background=info.c;nm.appendChild(dot);nm.appendChild(el('span','',info.t));ch.appendChild(nm);
+      var list=[];for(var i=0;i<ALL.length;i++)if(optText('当前阶段',ALL[i]['当前阶段'])===info.t)list.push(ALL[i]);
+      ch.appendChild(bound('span','num',list.length));col.appendChild(ch);
+      var cards=el('div','cards');
+      if(list.length===0){cards.appendChild(el('div','col-empty','暂无'));}
+      else for(var k=0;k<list.length;k++)cards.appendChild(makeCard(list[k]));
+      col.appendChild(cards);board.appendChild(col);
+    }
+  }
+
+  function makeCard(row){
+    var c=el('article','pcard');
+    var tr=el('div','tagrow');
+    var tag=optText('当前阶段',row['当前阶段']),si=stageInfo(tag);
+    var tg=el('span','tag');tg.style.background=si.bg;tg.style.color=si.c;tg.textContent=tag;tr.appendChild(tg);
+    var pn=txt(row['核心指标']).match(/P\d/);tr.appendChild(bound('span','pnum',pn?pn[0]:''));
+    c.appendChild(tr);
+    c.appendChild(bound('div','ttl',row['产品名称']||'未命名'));
+    c.appendChild(bound('p','desc',row['一句话定位']||'—'));
+    var meta=el('div','meta');
+    var pers=el('span','pers');var av=el('span','pav');av.style.background=avatarColor(txt(row['负责人']));av.textContent=txt(row['负责人']).slice(0,1)||'?';pers.appendChild(av);pers.appendChild(bound('span','',row['负责人']||''));meta.appendChild(pers);
+    var d=row['最近更新']?String(row['最近更新']).slice(5,10):'';var tm=el('span','time');tm.appendChild(bound('span','',d));meta.appendChild(tm);
+    c.appendChild(meta);
+    var pinfo=prioInfo(optText('优先级',row['优先级']));
+    if(pinfo){var pw=el('div','progwrap');var lbl=el('div','lbl');lbl.appendChild(bound('span','','优先级'));var pv=bound('span','mono',pinfo.t);pv.style.color=pinfo.c;lbl.appendChild(pv);pw.appendChild(lbl);var bar=el('div','bar');bar.style.margin='0';var fill=el('i');fill.style.width={'高':'88%','中':'58%','低':'30%'}[pinfo.t]||'40%';fill.style.background=pinfo.c;bar.appendChild(fill);pw.appendChild(bar);c.appendChild(pw);}
+    var sel=el('select','stage-sel');var sl=stageList();
+    for(var i=0;i<sl.length;i++){var o=el('option','',sl[i].text);o.value=sl[i].id;if(sl[i].text===tag)o.selected=true;sel.appendChild(o);}
+    (function(rid,s){s.addEventListener('change',function(){moveStage(rid,s.value);});})(row._id,sel);
+    c.appendChild(sel);
+    (function(r){c.addEventListener('click',function(e){if(e.target.tagName==='SELECT')return;openEdit(r);});})(row);
+    return c;
+  }
+  function avatarColor(name){var palette=['#4f46e5','#7048e8','#0891b2','#059669','#e67700','#c2255c'];var h=0;for(var i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))%palette.length;return palette[h];}
+
+  /* ---- CRUD ---- */
+  function openNew(){editingId='';document.getElementById('modalTitle').textContent='新建产品 / 灵感';form.reset();var t=new Date(),ds=t.getFullYear()+'-'+('0'+(t.getMonth()+1)).slice(-2)+'-'+('0'+t.getDate()).slice(-2);form.querySelector('[name="updated"]').value=ds;refillDraft();mask.classList.add('show');}
+  function openEdit(row){
+    editingId=row._id;document.getElementById('modalTitle').textContent='编辑产品卡片';
+    function set(n,v){var e=form.querySelector('[name="'+n+'"]');if(e)e.value=v==null?'':v;}
+    set('pname',row['产品名称']);set('desc',row['一句话定位']);set('owner',row['负责人']);set('audience',row['目标用户']);set('risk',row['关键假设与风险']);set('next',row['下一步行动']);set('metric',row['核心指标']);
+    set('updated',row['最近更新']?String(row['最近更新']).slice(0,10):'');
+    var tag=optText('当前阶段',row['当前阶段']),sl=stageList(),sid='';for(var i=0;i<sl.length;i++)if(sl[i].text===tag)sid=sl[i].id;set('stage',sid);
+    var pv=optText('优先级',row['优先级']),pl=prioList(),pid='';for(var j=0;j<pl.length;j++)if(pl[j].text===pv)pid=pl[j].id;set('priority',pid);
+    mask.classList.add('show');
+  }
+  function closeMask(){mask.classList.remove('show');}
+  function collect(){
+    function g(n){var e=form.querySelector('[name="'+n+'"]');return e?e.value:'';}
+    var uv=g('updated'),iso=uv?new Date(uv+'T00:00:00Z').toISOString():new Date().toISOString();
+    var p={'产品名称':{text:g('pname')},'一句话定位':{text:g('desc')},'目标用户':{text:g('audience')},'负责人':{text:g('owner')},'关键假设与风险':{text:g('risk')},'下一步行动':{text:g('next')},'核心指标':{text:g('metric')},'最近更新':{date:iso}};
+    if(g('stage'))p['当前阶段']={select:g('stage')};if(g('priority'))p['优先级']={select:g('priority')};
+    return p;
+  }
+  form.addEventListener('submit',function(e){
+    e.preventDefault();var btn=document.getElementById('submitBtn');if(btn.disabled)return;btn.disabled=true;btn.textContent='保存中…';
+    var props=collect(),req;
+    try{req=editingId?db.updateRecord({databaseId:DATABASE_ID,recordId:editingId,properties:props}):db.addRecord({databaseId:DATABASE_ID,properties:props});}
+    catch(err){btn.disabled=false;btn.textContent='保存';toast('保存失败');return;}
+    req.then(function(){clearDraft();closeMask();form.reset();loadData();toast(editingId?'已保存修改':'已创建产品');})
+       .catch(function(err){console.error('[db] save:',err);toast('保存失败，请重试');})
+       .then(function(){btn.disabled=false;btn.textContent='保存';});
+  });
+  function moveStage(rid,val){if(!rid)return;var req;try{req=db.updateRecord({databaseId:DATABASE_ID,recordId:rid,properties:{'当前阶段':{select:val}}});}catch(e){toast('操作失败');return;}req.then(function(){toast('已更新阶段');loadData();}).catch(function(e){console.error('[db] stage:',e);toast('操作失败');});}
+
+  /* ---- bindings ---- */
+  document.getElementById('newBtn').addEventListener('click',openNew);
+  document.getElementById('createCardBtn').addEventListener('click',openNew);
+  document.getElementById('closeBtn').addEventListener('click',closeMask);
+  document.getElementById('cancelBtn').addEventListener('click',closeMask);
+  mask.addEventListener('click',function(e){if(e.target===mask)closeMask();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&mask.classList.contains('show'))closeMask();});
+  form.addEventListener('input',cacheDraft);form.addEventListener('change',cacheDraft);
+
+  var chips=document.querySelectorAll('#stageChips span');
+  for(var ci=0;ci<chips.length;ci++){(function(ch){ch.addEventListener('click',function(){for(var k=0;k<chips.length;k++){chips[k].classList.remove('on');var old=chips[k].querySelector('i');if(old)chips[k].removeChild(old);}ch.classList.add('on');var i=el('i');ch.insertBefore(i,ch.firstChild);switchView('overview');});})(chips[ci]);}
+})();
+</script>
+</body>
+</html>
