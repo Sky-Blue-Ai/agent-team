@@ -6,6 +6,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Cpath d='M16 6 7 11v10l9 5 9-5V11z' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cpath d='M7 11l9 5 9-5M16 16v10' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="mask-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Cpath d='M16 6 7 11v10l9 5 9-5V11z' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cpath d='M7 11l9 5 9-5M16 16v10' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E" color="#4f46e5">
 <title>ProductForge · 产品工厂动态工作台</title>
+<script>/* 主题提前应用，避免页面闪白 */try{var _t=localStorage.getItem('pf_theme');if(_t==='dark'||_t==='light')document.documentElement.setAttribute('data-theme',_t);}catch(e){}</script>
 <style>
 :root{
   --surface:#f8f9ff; --surface-low:#eff4ff; --surface-container:#e5eeff;
@@ -42,11 +43,15 @@ button{font-family:inherit;cursor:pointer}
 
 /* ============ SIDEBAR ============ */
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:256px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:space-between;z-index:50;box-shadow:var(--shadow-1)}
-.side-top{overflow-y:auto;flex:1}
-.brand{display:flex;align-items:center;gap:10px;padding:18px 16px}
+.side-top{overflow-y:auto;flex:1;min-height:0}
+.brand{padding:15px 14px 13px}
+.brand-top{display:flex;align-items:center;gap:10px}
+.brand .txt{display:flex;flex-direction:column;min-width:0;flex:1}
+.brand-top .brand-add{margin-left:auto}
+.brand-add{width:34px;height:34px;border-radius:8px;border:none;background:var(--primary-c);color:#fff;display:flex;align-items:center;justify-content:center;flex:0 0 auto;transition:.15s}
+.brand-add:hover{background:var(--primary)}
 .brand .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#4f46e5,#3525cd);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
 .brand .mark svg{width:20px;height:20px;stroke:#fff}
-.brand .txt{display:flex;flex-direction:column;min-width:0}
 .brand .txt b{font-size:16px;font-weight:600;color:var(--on-surface);letter-spacing:-.3px}
 .brand .txt span{font-size:11px;color:var(--t3);white-space:nowrap}
 .nav-group{padding:8px 12px}
@@ -58,37 +63,32 @@ button{font-family:inherit;cursor:pointer}
 .nav-item.active .ic{color:#fff}
 .prod-item{display:flex;align-items:center;gap:10px;padding:7px 11px;border-radius:8px;font-size:12.5px;color:var(--t2);cursor:pointer}
 .prod-item:hover{background:var(--surface-low)}
+.prod-item.sel{background:var(--primary-c);color:#fff;font-weight:600}
+.prod-item.sel .dot{box-shadow:0 0 0 2px rgba(255,255,255,.45)}
 .prod-item .dot{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
-.prod-item.sel{color:var(--t1);font-weight:600}
-.side-bottom{padding:12px;border-top:1px solid var(--border-subtle)}
+.side-bottom{padding:10px 12px 12px;border-top:1px solid var(--border-subtle);margin-top:auto;flex:0 0 auto;background:var(--white);position:relative;z-index:1}
 .quota{background:var(--surface-low);border-radius:12px;padding:13px;margin-bottom:10px}
 .quota .row{display:flex;justify-content:space-between;font-size:11px;color:var(--t3)}
 .quota .row .mono{color:var(--primary);font-weight:600}
 .bar{height:6px;border-radius:99px;background:var(--surface-high);overflow:hidden;margin:8px 0}
 .bar>i{display:block;height:100%;border-radius:99px;background:var(--primary-c)}
 .quota .foot{display:flex;justify-content:space-between;font-size:10.5px;color:var(--t4)}
-.meprofile{display:flex;align-items:center;gap:9px;padding:6px 4px}
+.meprofile{display:flex;align-items:center;gap:9px;padding:6px;border-radius:10px;transition:background .15s}
 .avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex:0 0 auto}
-.meprofile .who{display:flex;flex-direction:column;min-width:0;flex:1}
-.meprofile .who b{font-size:12.5px;color:var(--t1);font-weight:600}
-.meprofile .who span{font-size:10.5px;color:var(--t3);display:flex;align-items:center;gap:5px}
-.meprofile .who span i{width:6px;height:6px;border-radius:50%;background:var(--tertiary-c)}
+.meprofile .who{display:flex;flex-direction:column;min-width:0;flex:1;overflow:hidden}
+.meprofile .who b{font-size:12.5px;color:var(--t1);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meprofile .who>span{font-size:10px;color:var(--t3);display:flex;align-items:center;gap:5px;white-space:nowrap;margin-top:1px}
+.meprofile .who>span i{width:5px;height:5px;border-radius:50%;background:var(--tertiary-c);flex:0 0 auto}
+.meprofile.clickable{cursor:pointer}
+.meprofile.clickable:hover{background:var(--surface-low)}
+.set-gear{margin-left:auto;width:46px;min-height:44px;border-radius:10px;border:1px solid var(--border);background:var(--surface-low);color:var(--t3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex:0 0 auto;transition:.15s}
+.set-gear span{font-size:9.5px;line-height:1;letter-spacing:.2px;white-space:nowrap}
+.set-gear:hover{background:var(--surface-container);border-color:var(--primary-c);color:var(--primary)}
 
 /* ============ TOPBAR ============ */
 .topbar{position:fixed;left:256px;right:0;top:0;height:64px;background:rgba(255,255,255,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 24px;z-index:40}
 .crumb{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--t3);white-space:nowrap}
 .crumb b{color:var(--t1);font-weight:600}.crumb .cur{color:var(--primary);font-weight:600}
-.topsearch{position:relative;flex:1;max-width:420px;display:none}
-@media(min-width:1180px){.topsearch{display:block}}
-.topsearch .ic{position:absolute;left:11px;top:9px;color:var(--t4)}
-.topsearch input{width:100%;height:36px;padding:0 52px 0 36px;border:1px solid var(--border);border-radius:8px;background:var(--white);font-size:12.5px;color:var(--t1);outline:none}
-.topsearch input:focus{border-color:var(--primary-c);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
-.topsearch .kbd{position:absolute;right:8px;top:9px;font-size:10px;color:var(--t3);background:var(--surface-container);padding:1px 6px;border-radius:4px;font-family:var(--mono)}
-.stagechips{display:none;align-items:center;gap:2px;background:var(--surface-low);padding:4px;border-radius:99px;overflow-x:auto}
-@media(min-width:1400px){.stagechips{display:flex}}
-.stagechips span{font-size:11px;padding:4px 9px;border-radius:99px;color:var(--t3);white-space:nowrap;cursor:pointer}
-.stagechips span.on{background:var(--primary-c);color:#fff;font-weight:600;display:flex;align-items:center;gap:5px}
-.stagechips span.on i{width:5px;height:5px;border-radius:50%;background:#fff}
 .top-actions{display:flex;align-items:center;gap:6px;flex:0 0 auto}
 .iconbtn{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--t3);background:transparent;border:none;position:relative}
 .iconbtn:hover{background:var(--surface-container);color:var(--t1)}
@@ -153,13 +153,13 @@ button{font-family:inherit;cursor:pointer}
 .rb.alert{background:var(--error-container);color:#93000a}
 
 /* kanban board */
-.board{display:flex;gap:11px;overflow-x:auto;padding:4px 2px 12px;align-items:flex-start}
-.col{flex:0 0 214px;background:var(--surface-low);border-radius:10px;padding:9px;min-height:300px}
+.board{display:flex;gap:11px;overflow-x:auto;padding:4px 2px 12px;align-items:stretch}
+.col{flex:0 0 214px;background:var(--surface-low);border-radius:10px;padding:9px;min-height:300px;display:flex;flex-direction:column}
 .colhead{display:flex;align-items:center;justify-content:space-between;padding:3px 4px 10px}
 .colhead .name{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--t1)}
 .colhead .name .dot{width:8px;height:8px;border-radius:50%}
 .colhead .num{font-family:var(--mono);font-size:10px;background:var(--surface-high);color:var(--t2);padding:1px 8px;border-radius:99px}
-.cards{display:flex;flex-direction:column;gap:8px}
+.cards{display:flex;flex-direction:column;gap:8px;flex:1}
 .pcard{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:11px;box-shadow:var(--shadow-1);cursor:pointer;transition:.15s}
 .pcard:hover{box-shadow:var(--shadow-2);border-color:#cbd5e1;transform:translateY(-1px)}
 .pcard .tagrow{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:7px}
@@ -172,7 +172,7 @@ button{font-family:inherit;cursor:pointer}
 .progwrap{margin-top:9px}
 .progwrap .lbl{display:flex;justify-content:space-between;font-size:9.5px;color:var(--t3);margin-bottom:4px}
 .progwrap .lbl .mono{color:var(--t2)}
-.col-empty{font-size:11px;color:var(--t4);text-align:center;padding:22px 4px}
+.col-empty{font-size:11px;color:var(--t4);text-align:center;padding:22px 4px;flex:1;display:flex;align-items:center;justify-content:center}
 
 /* two-column bento */
 .bento2{display:grid;grid-template-columns:1.35fr 1fr;gap:14px}
@@ -351,7 +351,7 @@ tr:hover td{background:var(--canvas)}
 .modal .mh h2{margin:0;font-size:17px;font-weight:600}
 .modal .mb{padding:20px 22px}
 .modal .mf{display:flex;justify-content:flex-end;gap:10px;padding:15px 22px;border-top:1px solid var(--border)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .field.full{grid-column:1/-1}
 .field label{display:block;font-size:11px;font-weight:600;color:var(--t2);margin-bottom:6px}
 .field input,.field select,.field textarea{width:100%;border:1px solid #cbd5e1;border-radius:6px;padding:8px 10px;font-size:12.5px;color:var(--t1);background:#fff;font-family:inherit;outline:none}
@@ -383,15 +383,6 @@ tr:hover td{background:var(--canvas)}
 .editable{outline:none;border-radius:4px;transition:background .15s,box-shadow .15s;cursor:text}
 .editable:hover{background:rgba(79,70,229,.07);box-shadow:0 0 0 2px rgba(79,70,229,.14)}
 .editable:focus{background:#fff;box-shadow:0 0 0 2px var(--primary-c)}
-.edit-hint{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:linear-gradient(90deg,#eef2ff,#f5f3ff);border:1px solid #dbe4ff;border-radius:10px;padding:10px 16px;font-size:12px;color:var(--t2);margin-bottom:2px}
-.edit-hint .lead{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--primary)}
-.edit-hint .state{font-family:var(--mono);font-size:11px;color:var(--emerald);font-weight:600}
-.edit-hint .sp{flex:1}
-.edit-hint .btn-mini{height:30px;padding:0 11px;border-radius:7px;border:1px solid #c7d2fe;background:#fff;color:var(--primary);font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
-.edit-hint .btn-mini:hover{background:#eef2ff}
-.edit-hint .btn-mini.danger{color:var(--rose);border-color:#fecdd3}
-.edit-hint .btn-mini.danger:hover{background:#fff1f2}
-
 /* ============ DYNAMIC RECORDS ============ */
 .side-empty{font-size:11px;color:var(--t4);padding:6px 11px}
 .empty-note{font-size:11px;color:var(--t4);padding:16px 4px;text-align:center;line-height:1.6}
@@ -431,6 +422,20 @@ tr:hover td{background:var(--canvas)}
 .kb-card details[open] .kb-body{max-height:none;-webkit-line-clamp:unset;display:block}
 .kb-card .kb-tags{display:flex;gap:4px;flex-wrap:wrap}
 .kb-card .kb-tag{font-size:9.5px;background:var(--surface-low);color:var(--t3);padding:1px 7px;border-radius:99px}
+/* ============ equal-height card grids (Hub 条目) ============ */
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:12px;align-items:stretch}
+.grid-cards .kb-card,.grid-cards .sop{display:flex;flex-direction:column;margin-bottom:0;overflow:hidden}
+.grid-cards .kb-card{height:216px}
+.grid-cards .sop{height:236px}
+.grid-cards .kb-card .kb-body{flex:1;-webkit-line-clamp:4;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;max-height:none}
+.grid-cards .kb-card .kb-body.open{-webkit-line-clamp:unset;display:block;max-height:none}
+.grid-cards .kb-card details[open] .kb-body{-webkit-line-clamp:unset;display:block;max-height:none}
+.grid-cards .kb-card:has(details[open]){height:auto;max-height:none}
+.grid-cards .kb-card .rec-acts,.grid-cards .sop .rec-acts{margin-top:auto;padding-top:10px;flex:0 0 auto}
+.grid-cards .sop .steps{margin-top:auto;padding-top:8px;max-height:132px;overflow:hidden}
+.grid-cards .sop .rec-acts{margin-top:0;padding-top:8px}
+.grid-cards .empty-note{grid-column:1/-1}
+html[data-theme="dark"] .grid-cards .kb-card,html[data-theme="dark"] .grid-cards .sop{background:var(--surface-low)}
 .sop{border:1px solid var(--border);border-radius:9px;padding:14px;margin-bottom:11px;background:var(--white)}
 .sop .sop-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .sop .sop-head b{font-size:12.5px;color:var(--t1)}
@@ -443,6 +448,312 @@ tr:hover td{background:var(--canvas)}
 .sop .steps li:last-child:after{display:none}
 .sop .steps li .sn{font-weight:600;color:var(--t1);display:block}
 .sop .steps li .sd{color:var(--t3);font-size:10.5px}
+/* ============ PRODUCT DETAIL PAGE ============ */
+.detail-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.detail-actions{display:flex;gap:9px}
+.detail-hero{display:flex;align-items:center;justify-content:space-between;gap:26px;margin-bottom:16px;background:linear-gradient(135deg,#eef2ff,#faf8ff);border-color:#dbe4ff}
+.detail-hero-main{min-width:0;flex:1}
+.detail-badges{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.detail-stage,.detail-prio{display:inline-flex;align-items:center;height:26px;padding:0 11px;border-radius:20px;font-size:11.5px;font-weight:700;letter-spacing:.2px}
+.detail-prio{background:#fff;border:1px solid var(--border);color:var(--t2)}
+.detail-hero h1{margin:0 0 8px;font-size:26px;font-weight:750;letter-spacing:-.5px;color:var(--t1)}
+.detail-hero p{margin:0 0 16px;font-size:14px;color:var(--t2);line-height:1.7;max-width:760px}
+.detail-meta{display:flex;gap:22px;flex-wrap:wrap;font-size:12px;color:var(--t3)}
+.detail-meta span{display:inline-flex;align-items:center;gap:6px}
+.detail-meta b{color:var(--t2);font-weight:600}
+.detail-ring{position:relative;width:120px;height:120px;flex:0 0 auto}
+.detail-ring .ring{width:120px;height:120px;transform:rotate(-90deg)}
+.detail-ring .ring-bg{fill:none;stroke:#e0e7ff;stroke-width:9}
+.detail-ring .ring-fg{fill:none;stroke:var(--primary-c);stroke-width:9;stroke-linecap:round;stroke-dasharray:327;stroke-dashoffset:327;transition:stroke-dashoffset .5s}
+.ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-label b{font-size:24px;font-weight:750;color:var(--primary)}
+.ring-label span{font-size:10.5px;color:var(--t3);margin-top:2px}
+.detail-section{margin-bottom:16px}
+.detail-stages{display:flex;gap:6px;margin-top:16px;overflow-x:auto;padding-bottom:6px}
+.dstage{flex:1;min-width:96px;border:1px solid var(--border);border-radius:10px;padding:11px 9px;text-align:center;cursor:pointer;background:var(--white);transition:transform .15s,box-shadow .15s,border-color .15s}
+.dstage:hover{transform:translateY(-2px);box-shadow:var(--shadow-2)}
+.dstage .no{font-family:var(--mono);font-size:10px;color:var(--t4)}
+.dstage .nm{font-size:12px;font-weight:600;color:var(--t2);margin-top:5px}
+.dstage.done{background:var(--surface-low);border-color:#c7d2fe}
+.dstage.cur{background:var(--primary-c);border-color:var(--primary-c);box-shadow:0 6px 16px -4px rgba(79,70,229,.45)}
+.dstage.cur .no,.dstage.cur .nm{color:#fff}
+.dstage .tick{font-size:10px;margin-top:4px;color:var(--emerald)}
+.dstage.cur .tick{color:#e0e7ff}
+.detail-fields{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}
+.dfield{border:1px solid var(--border);border-radius:10px;padding:12px 14px;background:var(--white)}
+.dfield.wide{grid-column:1/-1}
+.dfield .lab{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.4px;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.dfield .val{font-size:13.5px;color:var(--t1);line-height:1.6}
+@media(max-width:760px){.detail-fields{grid-template-columns:1fr}.detail-hero{flex-direction:column;align-items:flex-start}.detail-ring{align-self:center}}
+
+/* ============ 深夜模式 ============ */
+html[data-theme="dark"]{
+  --surface:#111a2b; --surface-low:#172236; --surface-container:#1e2b42;
+  --surface-high:#263550; --surface-highest:#31415e; --white:#141d2f;
+  --on-surface:#eef3fb; --on-surface-v:#cbd5e1; --outline:#94a3b8; --outline-v:#475569;
+  --primary:#a5b4fc; --primary-c:#5b5bd6; --on-primary:#ffffff; --primary-fixed:#2e2a63;
+  --secondary:#b6c2e8; --secondary-fixed:#2b3560; --tertiary:#5eead4; --tertiary-c:#2dd4bf;
+  --tertiary-fixed:#12463f; --error:#ff8787; --error-container:#4a1f27;
+  --border:#2a3750; --border-subtle:#202c42; --canvas:#0b1120;
+  --t1:#e8eef8; --t2:#c2cede; --t3:#93a2b8; --t4:#6b7c96;
+  --emerald:#34d399; --rose:#fb7185;
+  --shadow-1:0 1px 2px 0 rgba(0,0,0,.3);
+  --shadow-2:0 6px 16px -4px rgba(0,0,0,.45),0 2px 4px -2px rgba(0,0,0,.3);
+  --shadow-3:0 20px 30px -8px rgba(0,0,0,.55),0 8px 12px -6px rgba(0,0,0,.4);
+}
+html[data-theme="dark"] body{background:var(--canvas)}
+html[data-theme="dark"] ::-webkit-scrollbar-thumb{background:#40516c}
+html[data-theme="dark"] .topbar{background:rgba(20,29,47,.92)}
+html[data-theme="dark"] .modal{background:var(--white)}
+html[data-theme="dark"] .field input,html[data-theme="dark"] .field select,
+html[data-theme="dark"] .field textarea,html[data-theme="dark"] .kb-search{
+  background:#0f1728;border-color:#334155;color:var(--t1)}
+html[data-theme="dark"] .btn-line,html[data-theme="dark"] .chipbtn{background:var(--white)}
+html[data-theme="dark"] .editable:focus{background:#0f1728}
+html[data-theme="dark"] .insight{background:linear-gradient(135deg,#1e1b42,#221d49);border-color:#3730a3}
+html[data-theme="dark"] .alertbox,html[data-theme="dark"] .prob{background:#3a1d24;border-color:#7f3038}
+html[data-theme="dark"] .alertbox .hd{color:#ff9b9b}
+html[data-theme="dark"] .alertbox .hd .t{color:#ffa8a8}
+html[data-theme="dark"] .prob .tag{background:#7f3038;color:#ffc9c9}
+html[data-theme="dark"] .chipbtn.solid{background:#a92f38;color:#fff;border-color:#a92f38}
+html[data-theme="dark"] .rb.alert{background:#4a1f27;color:#ffc9c9}
+html[data-theme="dark"] .detail-hero{background:linear-gradient(135deg,#1e1b42,#211c46);border-color:#3730a3}
+html[data-theme="dark"] .detail-ring .ring-bg{stroke:#263550}
+html[data-theme="dark"] .detail-prio{background:var(--white)}
+html[data-theme="dark"] .dstage.cur .no,html[data-theme="dark"] .dstage.cur .nm{color:#fff}
+html[data-theme="dark"] [style*="color:#c92a2a"]{color:#ff9b9b!important}
+html[data-theme="dark"] [style*="border-color:#ffc9c9"]{border-color:#7f3038!important}
+html[data-theme="dark"] [style*="color:#00524b"]{color:#5eead4!important}
+html[data-theme="dark"] [style*="color:#565e74"]{color:#c7d2fe!important}
+html[data-theme="dark"] [style*="background:#e2dfff"]{background:#2e2a63!important}
+html[data-theme="dark"] [style*="background:#dae2fd"]{background:#2b3560!important}
+html[data-theme="dark"] [style*="background:#dce9ff"]{background:#263550!important}
+html[data-theme="dark"] [style*="background:#89f5e7"]{background:#12463f!important}
+html[data-theme="dark"] [style*="background:#e6fcf5"]{background:#12463f!important}
+html[data-theme="dark"] [style*="background:#f5f3ff"]{background:#2e2a63!important}
+html[data-theme="dark"] [style*="background:#eef2ff"]{background:#2e2a63!important}
+
+/* ============ SETTINGS ============ */
+.set-gear{margin-left:auto;width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--surface-low);color:var(--t3);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.set-gear:hover{background:var(--surface-container);color:var(--primary)}
+.meprofile.clickable{cursor:pointer;border-radius:9px;padding:6px 4px;transition:background .15s}
+.meprofile.clickable:hover{background:var(--surface-low)}
+.set-shell{display:grid;grid-template-columns:206px minmax(0,1fr);overflow:hidden}
+.set-nav{border-right:1px solid var(--border-subtle);background:var(--surface-low);padding:12px}
+.set-tab{width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;margin-bottom:3px;border-radius:9px;border:none;background:transparent;color:var(--t2);text-align:left;transition:.15s}
+.set-tab .ic{color:var(--t3)}
+.set-tab b{display:block;font-size:12.5px;font-weight:600;line-height:1.3}
+.set-tab small{display:block;font-size:10px;color:var(--t3);margin-top:2px;line-height:1.3}
+.set-tab:hover{background:var(--surface-container);color:var(--t1)}
+.set-tab.on{background:var(--primary-c);color:#fff}
+.set-tab.on .ic,.set-tab.on small{color:rgba(255,255,255,.85)}
+.set-panels{padding:18px 24px 26px;min-width:0}
+.set-panel{display:none;animation:fade .2s ease}
+.set-panel.on{display:block}
+@media(max-width:820px){
+  .set-shell{grid-template-columns:1fr}
+  .set-nav{display:flex;gap:4px;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border-subtle);padding:8px}
+  .set-tab{min-width:108px;margin:0;flex:0 0 auto}
+  .set-panels{padding:18px}
+}
+.set-hd{display:flex;align-items:flex-start;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--border-subtle);margin-bottom:16px}
+.set-ico{width:36px;height:36px;border-radius:9px;background:var(--primary-fixed);color:var(--primary);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.set-hd .h3{font-size:14px;margin:0 0 3px}
+.set-hd p{font-size:11.5px;color:var(--t3);margin:0;line-height:1.6}
+.set-row{display:flex;align-items:center;gap:12px}
+.set-row+.set-row{margin-top:14px}
+.set-avatar{width:46px;height:46px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;font-weight:700}
+.avatar,.set-avatar,.av{background:#3525cd!important;color:#fff!important}
+.set-field{flex:1;min-width:0}
+.set-field label{display:block;font-size:11px;font-weight:600;color:var(--t2);margin-bottom:6px}
+.set-field input{width:100%;height:36px;padding:0 11px;border:1px solid var(--border);border-radius:7px;background:var(--white);color:var(--t1);font-size:12.5px;font-family:inherit;outline:none}
+.set-field input:focus{border-color:var(--primary-c);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+.set-note{font-size:11px;color:var(--t3);line-height:1.6}
+.set-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.theme-opt{display:flex;align-items:center;gap:11px;flex:1;min-width:150px;padding:14px;border-radius:10px;border:1px solid var(--border);background:var(--white);color:var(--t1);text-align:left;transition:.15s}
+.theme-opt:hover{border-color:var(--primary-c);background:var(--surface-low)}
+.theme-opt.on{border-color:var(--primary-c);box-shadow:0 0 0 2px rgba(79,70,229,.16);background:var(--surface-low)}
+.theme-opt .tic{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.theme-opt .tic.light{background:#fff3bf;color:#e67700}
+.theme-opt .tic.dark{background:#2e2a63;color:#c7d2fe}
+.theme-opt b{display:block;font-size:12.5px;font-weight:600}
+.theme-opt small{display:block;font-size:10.5px;color:var(--t3);margin-top:2px}
+.theme-opt .pick{margin-left:auto;color:var(--primary);display:none}
+.theme-opt.on .pick{display:block}
+.set-btns{display:flex;gap:9px;flex-wrap:wrap}
+.set-stat{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px dashed var(--border-subtle);font-size:11.5px;color:var(--t2)}
+.set-stat:last-child{border-bottom:none}
+.set-stat b{font-family:var(--mono);color:var(--t1);font-weight:600}
+.danger-zone{margin-top:14px;padding-top:14px;border-top:1px dashed var(--border)}
+.help-list details{border:1px solid var(--border);border-radius:8px;margin-bottom:8px;background:var(--white)}
+.help-list summary{cursor:pointer;padding:11px 13px;font-size:12px;font-weight:600;color:var(--t1);list-style:none;display:flex;align-items:center;gap:8px}
+.help-list summary::-webkit-details-marker{display:none}
+.help-list summary:before{content:'+';font-family:var(--mono);color:var(--primary);font-size:14px;width:12px}
+.help-list details[open] summary:before{content:'−'}
+.help-list .help-body{padding:0 14px 12px 33px;font-size:11.5px;color:var(--t2);line-height:1.75}
+.help-list .help-body code{font-family:var(--mono);background:var(--surface-low);padding:1px 5px;border-radius:4px;color:var(--primary)}
+html[data-theme="dark"] .set-field input{background:#0f1728;border-color:#334155}
+html[data-theme="dark"] .toast{background:#e8eef8;color:#0b1120}
+html[data-theme="dark"] .set-ico{background:#2e2a63;color:#b4b7ff}
+html[data-theme="dark"] .theme-opt .tic.light{background:#4a3b0f;color:#ffd43b}
+html[data-theme="dark"] .set-gear:hover{color:#b4b7ff}
+
+/* ============ AUDIT: summary + secondary page ============ */
+.audit-brief .mini-body{padding-top:4px}
+.audit-brief .tl-item{padding:9px 0}
+.audit-brief .tl-item:last-child{border-bottom:none}
+.audit-more{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:10px;border:none;border-top:1px solid var(--border-subtle);background:transparent;color:var(--primary);font-size:11.5px;font-weight:600}
+.audit-more:hover{background:var(--surface-low)}
+.audit-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 18px}
+.audit-tools .kb-search{width:240px}
+.audit-tools .tabs{flex:1;min-width:220px;border:none;padding:0;background:transparent}
+.audit-tools .tabs button.on{background:var(--primary-fixed);color:var(--primary)}
+.audit-list{padding:2px 20px 8px}
+.audit-day{display:flex;align-items:center;gap:9px;margin:16px 0 2px;font-size:10.5px;font-weight:700;color:var(--t3);letter-spacing:.05em}
+.audit-day:after{content:'';height:1px;background:var(--border-subtle);flex:1}
+.audit-item{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:11px;align-items:start;padding:13px 0;border-bottom:1px solid var(--border-subtle)}
+.audit-item:last-child{border-bottom:none}
+.audit-item .ak{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--primary);background:var(--primary-fixed)}
+.audit-item b{font-size:12.5px;color:var(--t1)}
+.audit-item p{margin:3px 0 0;font-size:11.5px;color:var(--t2);line-height:1.6;word-break:break-word}
+.audit-item .at{font-size:10.5px;color:var(--t4);white-space:nowrap;font-family:var(--mono)}
+.audit-empty{padding:44px 20px;text-align:center;color:var(--t3);font-size:12px}
+.audit-foot{padding:2px 20px 18px;text-align:center}
+@media(max-width:760px){.audit-tools .kb-search{width:100%}.audit-item{grid-template-columns:30px minmax(0,1fr)}.audit-item .at{grid-column:2;text-align:left}}
+
+/* ============ AI generate modal ============ */
+.modal-sm{max-width:440px}
+.rblk-icon{width:46px;height:46px;border-radius:12px;background:#fff0f0;color:#e03131;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.rblk-body{font-size:12.5px;color:var(--t1);line-height:1.7;white-space:pre-wrap}
+.rblk-tip{margin-top:14px;padding-top:12px;border-top:1px solid var(--border-subtle);font-size:11px;color:var(--t3)}
+.rule-drive{display:flex;align-items:center;gap:6px;margin-top:9px;font-size:10.5px;color:var(--primary);background:var(--primary-fixed);border-radius:6px;padding:6px 9px}
+.rule-drive i{width:6px;height:6px;border-radius:50%;background:#10b981;flex:0 0 auto}
+.rule-drive.off{color:var(--t3);background:var(--surface-low)}
+.rule-drive.off i{background:var(--t4)}
+html[data-theme="dark"] .rblk-icon{background:#4a1f1f;color:#ff9b9b}
+.aigen-hint{display:flex;gap:10px;align-items:flex-start;background:var(--surface-low);border:1px solid var(--border);border-radius:9px;padding:11px 13px;font-size:11.5px;color:var(--t2);line-height:1.65}
+.aigen-hint .ic{color:var(--primary);margin-top:1px}
+.ai-opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+@media(max-width:560px){.ai-opt-grid{grid-template-columns:1fr}}
+.ai-opt-card{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--border);border-radius:9px;padding:11px 12px;cursor:pointer;background:var(--white);transition:.15s}
+.ai-opt-card:hover{border-color:var(--primary-c)}
+.ai-opt-card.on{border-color:var(--primary-c);background:var(--primary-fixed)}
+.ai-opt-card input{margin-top:2px;accent-color:var(--primary-c);flex:0 0 auto}
+.ai-opt-card b{display:block;font-size:12px;color:var(--t1);font-weight:600}
+.ai-opt-card small{display:block;font-size:10.5px;color:var(--t3);margin-top:2px;line-height:1.5}
+.ai-scope-row{margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:11.5px;color:var(--t2)}
+.ai-scope-row select{height:32px;border:1px solid var(--border);border-radius:7px;background:var(--white);color:var(--t1);font-size:11.5px;padding:0 8px;font-family:inherit;max-width:230px}
+.ai-status{margin-top:12px;font-size:11px;color:var(--t3);min-height:17px}
+.ai-preview{margin-top:10px;max-height:300px;overflow:auto;border:1px solid var(--border);border-radius:9px}
+.ai-pitem{display:flex;gap:9px;align-items:flex-start;padding:11px 13px;border-bottom:1px solid var(--border-subtle)}
+.ai-pitem:last-child{border-bottom:none}
+.ai-pitem input{margin-top:3px;accent-color:var(--primary-c);flex:0 0 auto}
+.ai-pitem .pb{min-width:0;flex:1}
+.ai-pitem .pt{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.ai-pitem b{font-size:12px;color:var(--t1)}
+.ai-pitem .tagline{font-size:9.5px;padding:1px 7px;border-radius:99px;background:var(--primary-fixed);color:var(--primary);font-weight:600}
+.ai-pitem .src{font-size:10.5px;color:var(--t3);margin-top:3px;line-height:1.5}
+.ai-pitem .pd{font-size:10.5px;color:var(--t2);margin:6px 0 0;white-space:pre-wrap;line-height:1.6;max-height:92px;overflow:auto}
+.ai-empty{padding:26px 16px;text-align:center;font-size:11.5px;color:var(--t3)}
+html[data-theme="dark"] .audit-tools .tabs button.on{color:#c7d2fe}
+html[data-theme="dark"] .ai-opt-card.on{background:#2e2a63;border-color:#6366f1}
+html[data-theme="dark"] .ai-scope-row select{background:#0f1728;border-color:#334155;color:#e2e8f0}
+html[data-theme="dark"] .aigen-hint{background:#1a2440}
+
+/* ============ L3: Agent runner + AI engine ============ */
+.run-btn{color:var(--primary)!important;border-color:#c7d2fe!important;background:var(--primary-fixed)!important;font-weight:600}
+.run-btn:hover{background:#e0e7ff!important}
+.rec-btn.run-btn .ic{width:10px;height:10px;vertical-align:-1px;margin-right:2px}
+.modal-run{max-width:720px}
+.run-hero{display:flex;gap:11px;align-items:flex-start;padding:13px 14px;border-radius:10px;background:var(--primary-fixed);border:1px solid #dbe4ff}
+.run-hero .rh-ico{width:38px;height:38px;border-radius:9px;background:var(--primary-c);color:#fff;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.run-hero .rh-ico svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.run-hero h3{margin:0 0 3px;font-size:13.5px;color:var(--t1)}
+.run-hero p{margin:0;font-size:11px;color:var(--t3);line-height:1.6}
+.run-mode{display:flex;gap:8px;margin-top:16px}
+.run-mode button{flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--white);text-align:left;cursor:pointer;transition:.15s;color:var(--t1)}
+.run-mode button:hover{border-color:var(--primary-c)}
+.run-mode button.on{border-color:var(--primary-c);background:var(--primary-fixed);box-shadow:0 0 0 2px rgba(79,70,229,.12)}
+.run-mode b{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700}
+.run-mode b svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.run-mode small{display:block;font-size:10.5px;color:var(--t3);margin-top:5px;line-height:1.55}
+.run-mode .rec-chip{margin-left:auto;font-size:9px;padding:1px 7px;border-radius:99px;background:var(--emerald);color:#fff;font-weight:600}
+.run-mode .rec-chip.off{background:var(--t4)}
+.run-field{margin-top:14px}
+.run-field label{display:block;font-size:11.5px;font-weight:600;color:var(--t2);margin-bottom:6px}
+.run-field textarea{width:100%;min-height:76px;resize:vertical;border:1px solid var(--border);border-radius:8px;background:var(--white);color:var(--t1);font-size:12.5px;font-family:inherit;padding:10px 11px;outline:none;line-height:1.6}
+.run-field textarea:focus{border-color:var(--primary-c);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+.run-out-wrap{margin-top:12px}
+.run-out{width:100%;min-height:150px;max-height:260px;resize:vertical;border:1px solid var(--border);border-radius:8px;background:var(--surface-low);color:var(--t1);font-size:11.5px;font-family:var(--mono);padding:12px;line-height:1.7;white-space:pre-wrap;outline:none}
+.run-msg{margin-top:12px;padding:11px 13px;border-radius:8px;font-size:11.5px;line-height:1.65;display:none}
+.run-msg.show{display:block}
+.run-msg.info{background:var(--primary-fixed);color:var(--primary)}
+.run-msg.warn{background:#fff3bf;color:#a61e4d}
+.run-msg.ok{background:#e6fcf5;color:#087f5b}
+.run-msg.err{background:#ffe3e3;color:#c92a2a}
+.run-result{margin-top:12px;max-height:280px;overflow:auto;border:1px solid var(--border);border-radius:9px;padding:14px;font-size:12px;line-height:1.8;color:var(--t1);white-space:pre-wrap;display:none}
+.run-result.show{display:block}
+.eng-status{display:flex;align-items:center;gap:12px;padding:15px;border-radius:11px;background:var(--surface-low);border:1px solid var(--border)}
+.eng-status .es-ico{width:44px;height:44px;border-radius:11px;background:#e6fcf5;color:#087f5b;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.eng-status .es-ico.off{background:#f1f5f9;color:var(--t3)}
+.eng-status .es-ico svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.eng-status b{font-size:13px;color:var(--t1);display:block}
+.eng-status p{margin:4px 0 0;font-size:11px;color:var(--t3);line-height:1.6}
+.eng-preset{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.eng-preset button{padding:8px 13px;border-radius:8px;border:1px solid var(--border);background:var(--white);color:var(--t2);font-size:11.5px;font-weight:600;cursor:pointer}
+.eng-preset button.on{border-color:var(--primary-c);background:var(--primary-fixed);color:var(--primary)}
+.eng-form{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.eng-form .full{grid-column:1/-1}
+.eng-form label{display:block;font-size:11px;font-weight:600;color:var(--t2);margin-bottom:6px}
+.eng-form input{width:100%;height:36px;padding:0 11px;border:1px solid var(--border);border-radius:7px;background:var(--white);color:var(--t1);font-size:12px;font-family:inherit;outline:none}
+.eng-form input:focus{border-color:var(--primary-c);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+.eng-note{margin-top:14px;font-size:11px;color:var(--t3);line-height:1.7;padding:11px 12px;background:var(--surface-low);border-radius:8px;border-left:3px solid var(--primary-c)}
+.eng-note code{font-family:var(--mono);background:var(--surface-container);padding:1px 5px;border-radius:4px;font-size:10.5px}
+html[data-theme="dark"] .run-msg.warn{background:#4a3410;color:#ffd8a8}
+html[data-theme="dark"] .run-msg.err{background:#4a1f1f;color:#ff9b9b}
+html[data-theme="dark"] .run-msg.ok{background:#163d33;color:#8ce6c4}
+html[data-theme="dark"] .run-btn{color:#c7d2fe!important;border-color:#4c5380!important;background:#2e2a63!important}
+html[data-theme="dark"] .run-out{background:#0f1728}
+html[data-theme="dark"] .eng-preset button.on{background:#2e2a63;border-color:#6366f1;color:#c7d2fe}
+
+/* ============ consistent select arrows ============ */
+select,.field select,.pcard .stage-sel,.ai-scope-row select{-webkit-appearance:none;appearance:none;padding-right:30px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 9px center;background-size:14px 14px;cursor:pointer}
+html[data-theme="dark"] select,html[data-theme="dark"] .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")}
+.pcard .stage-sel,.ai-scope-row select{padding-right:28px;background-position:right 7px center}
+
+/* ============ search page ============ */
+.search-main{display:flex;gap:10px;align-items:center}
+.search-main .search-field{position:relative;flex:1;min-width:0}
+.search-main .search-field .ic{position:absolute;left:13px;top:13px;color:var(--t4)}
+.search-main input{width:100%;height:44px;padding:0 14px 0 40px;border:1px solid var(--border);border-radius:9px;background:var(--white);color:var(--t1);font-size:13px;font-family:inherit;outline:none}
+.search-main input:focus{border-color:var(--primary-c);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+.search-block{padding:18px 20px}
+.search-block+.search-block{border-top:1px solid var(--border-subtle)}
+.search-block-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.search-block-hd .t{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--t1)}
+.search-block-hd .t .ic{color:var(--primary)}
+.search-text-btn{border:none;background:transparent;color:var(--t3);font-size:11px;font-family:inherit;cursor:pointer;padding:4px 6px}
+.search-text-btn:hover{color:var(--rose)}
+.recent-list{display:flex;flex-wrap:wrap;gap:8px}
+.recent-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid var(--border);border-radius:99px;background:var(--surface-low);color:var(--t2);font-size:11.5px;cursor:pointer;font-family:inherit}
+.recent-chip:hover{border-color:var(--primary-c);color:var(--primary);background:var(--primary-fixed)}
+.recent-chip .ic{width:12px;height:12px;color:var(--t4)}
+.search-hint{font-size:11.5px;color:var(--t3);line-height:1.7}
+.search-group{margin-top:14px}
+.search-group:first-child{margin-top:0}
+.search-group .gt{font-size:10.5px;color:var(--t4);font-weight:600;letter-spacing:.4px;margin-bottom:7px}
+.search-result{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--white);cursor:pointer;transition:.15s}
+.search-result+.search-result{margin-top:6px}
+.search-result:hover{border-color:var(--primary-c);background:var(--primary-fixed)}
+.search-result .ic{color:var(--primary);flex:0 0 auto}
+.search-result .rb{min-width:0;flex:1}
+.search-result b{display:block;font-size:12px;color:var(--t1);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-result p{margin:3px 0 0;font-size:10.5px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-result .go{font-size:10.5px;color:var(--t4)}
+.search-empty{padding:26px 12px;text-align:center;font-size:11.5px;color:var(--t3)}
+@media(max-width:760px){.search-main{flex-wrap:wrap}.search-main .btn-primary{width:100%;justify-content:center}}
 </style>
 </head>
 <body>
@@ -472,6 +783,8 @@ tr:hover td{background:var(--canvas)}
 <symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10M15 10v10"/></symbol>
 <symbol id="i-calc" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M14 12h2M8 16h2M14 16h2"/></symbol>
 <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
 <symbol id="i-track" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></symbol>
 <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3 8 8 10 5-2 8-5 8-10V6z"/><path d="m9 12 2 2 4-4"/></symbol>
 <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
@@ -485,14 +798,31 @@ tr:hover td{background:var(--canvas)}
 <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4zM22 2 11 13"/></symbol>
 <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/></symbol>
 <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V21h-4v-.08A1.7 1.7 0 0 0 8.96 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.04H3v-4h.08A1.7 1.7 0 0 0 4.6 8.96a1.7 1.7 0 0 0-.34-1.87l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 8.96 4.6h.02A1.7 1.7 0 0 0 10 3.08V3h4v.08a1.7 1.7 0 0 0 1.04 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06 2.83 2.83-.06.06a1.7 1.7 0 0 0-.34 1.87v.02A1.7 1.7 0 0 0 20.92 10H21v4h-.08A1.7 1.7 0 0 0 19.4 15z"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 11l5 5 5-5M4 21h16"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 2 1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9zM18.5 15l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9z"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M7 8l5-5 5 5M4 21h16"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></symbol>
+<symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18h1.5a2 2 0 0 0 0-4H12a2 2 0 0 1 0-4h1a7 7 0 0 0 0-14z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+<symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9 2 2-2 2 2 2-3 3-2-2-2 2"/></symbol>
+<symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></symbol>
 </defs></svg>
 
 <!-- ===== SIDEBAR ===== -->
 <aside class="sidebar" id="sidebar">
   <div class="side-top">
     <div class="brand">
+      <div class="brand-top">
       <div class="mark"><svg class="ic"><use href="#i-logo"/></svg></div>
       <div class="txt"><b>ProductForge</b><span>全生命周期协同工作台</span></div>
+      <button class="brand-add" id="newBtn" title="新建产品 / 灵感" aria-label="新建产品 / 灵感"><svg class="ic sm"><use href="#i-plus"/></svg></button>
+    </div>
     </div>
     <div class="nav-group">
       <div class="nav-title">核心流水线</div>
@@ -506,14 +836,19 @@ tr:hover td{background:var(--canvas)}
       <div id="prodList"><div class="side-empty">暂无产品</div></div>
     </div>
     <div class="nav-group">
-      <div class="nav-title">工程协同</div>
-      <a class="nav-item" data-view="knowledge"><svg class="ic"><use href="#i-book"/></svg>知识库 &amp; SOP</a>
+      <div class="nav-title">Agent 能力中心</div>
+      <a class="nav-item" data-view="kb"><svg class="ic"><use href="#i-book"/></svg>知识库</a>
+      <a class="nav-item" data-view="sop"><svg class="ic"><use href="#i-route"/></svg>SOP 流程</a>
+      <a class="nav-item" data-view="skill"><svg class="ic"><use href="#i-spark"/></svg>Skill Hub</a>
+      <a class="nav-item" data-view="agent"><svg class="ic"><use href="#i-hub"/></svg>Agent Hub</a>
+      <a class="nav-item" data-view="rule"><svg class="ic"><use href="#i-shield"/></svg>Rule Hub</a>
     </div>
   </div>
   <div class="side-bottom">
-    <div class="meprofile">
-      <div class="avatar" id="meAvatar" style="background:linear-gradient(135deg,#4f46e5,#7048e8)" title="头像首字跟随名字自动生成">我</div>
-      <div class="who"><b id="meName" data-editable="1">点击设置我的名字</b><span><i></i><span data-editable="1">个人工作台</span></span></div>
+    <div class="meprofile clickable" id="meProfile" title="个人设置">
+      <div class="avatar" id="meAvatar" style="background:#3525cd" title="头像首字跟随名字自动生成">我</div>
+      <div class="who"><b id="meName" data-editable="1">点击设置我的名字</b><span><i></i><span>个人工作台</span></span></div>
+      <button class="set-gear" id="settingsBtn" title="设置" aria-label="打开设置"><svg class="ic sm"><use href="#i-settings"/></svg><span>设置</span></button>
     </div>
   </div>
 </aside>
@@ -521,34 +856,16 @@ tr:hover td{background:var(--canvas)}
 <!-- ===== TOPBAR ===== -->
 <header class="topbar">
   <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
-    <button class="menu-btn" id="menuBtn"><svg class="ic lg"><use href="#i-kanban"/></svg></button>
+    <button class="menu-btn" id="menuBtn"><svg class="ic lg"><use href="#i-menu"/></svg></button>
     <div class="crumb"><span>工作台</span><span>/</span><span class="cur" id="crumbCur">主工厂流水线</span></div>
-    <div class="topsearch">
-      <svg class="ic sm"><use href="#i-search"/></svg>
-      <input id="topSearch" type="text" placeholder="⌘K 搜索产品、PRD、决策记录或待办指标...">
-      <span class="kbd">⌘K</span>
-    </div>
-  </div>
-  <div class="stagechips" id="stageChips">
-    <span class="on"><i></i>灵感</span><span>规划</span><span>决策</span><span>设计</span><span>研发</span><span>落地</span><span>上线</span><span>运营</span><span>调优</span>
   </div>
   <div class="top-actions">
-    <button class="btn-primary" id="newBtn"><svg class="ic sm"><use href="#i-plus"/></svg>新建产品/灵感</button>
+    <button class="iconbtn" id="searchBtn" title="搜索" aria-label="打开搜索"><svg class="ic"><use href="#i-search"/></svg></button>
     <button class="iconbtn" id="helpBtn" title="使用说明"><svg class="ic"><use href="#i-help"/></svg></button>
   </div>
 </header>
 
 <main class="main">
-<div class="edit-hint" id="editbar">
-  <span class="lead"><svg class="ic sm"><use href="#i-bulb"/></svg>全站可编辑</span>
-  <span>示例假数据已清空，这是一张空白模板。点击任意「待填写」处录入你的内容，改动自动保存；产品卡片可新建 / 编辑 / 删除。</span>
-  <span class="sp"></span>
-  <span class="state" id="saveState">已就绪</span>
-  <button class="btn-mini" id="exportBtn"><svg class="ic sm"><use href="#i-layers"/></svg>导出备份</button>
-  <button class="btn-mini" id="importBtn"><svg class="ic sm"><use href="#i-book"/></svg>导入备份</button>
-  <button class="btn-mini danger" id="resetBtn"><svg class="ic sm"><use href="#i-track"/></svg>重置</button>
-  <input type="file" id="importFile" accept="application/json,.json" style="display:none">
-</div>
 
 <!-- ==================== VIEW 1: OVERVIEW ==================== -->
 <section class="view active" id="view-overview">
@@ -595,11 +912,71 @@ tr:hover td{background:var(--canvas)}
     </div>
   </div>
 
-  <div class="card">
-    <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-clock"/></svg>全工厂审计日志与 SOP 流转动态</div><span class="cap" id="logCount">0 条记录</span></div>
+  <div class="card audit-brief">
+    <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-clock"/></svg>全工厂审计日志与 SOP 流转动态</div><button class="chipbtn" id="auditOpen"><svg class="ic sm"><use href="#i-arrow"/></svg>查看全部</button></div>
     <div class="mini-body" id="logList" data-render="log" data-empty="暂无动态。新建产品、推进阶段、签批立项都会记录在这里。">
-      <div class="tl-item"><div class="av" style="background:#4f46e5">林</div><div class="c"><b>林晨 (Product Lead)</b><p>将卡片 <span class="mk">CloudFlow 2.0 PRD 终审</span> 推进至 <span class="mk">[战略决策 Stage]</span></p></div><div class="tm">12 分钟前</div></div>
     </div>
+    <button class="audit-more" id="auditOpen2">共 <b id="logCount">0</b> 条记录 · 进入完整审计日志 →</button>
+  </div>
+</section>
+
+<!-- ==================== VIEW: PRODUCT DETAIL ==================== -->
+<section class="view" id="view-detail">
+  <div class="detail-top">
+    <button class="btn-line" id="detailBack"><svg class="ic sm"><use href="#i-back"/></svg>返回流水线</button>
+    <div class="detail-actions">
+      <button class="btn-line" id="detailDelete" style="color:#c92a2a;border-color:#ffc9c9">删除</button>
+      <button class="btn-primary" id="detailEdit"><svg class="ic sm"><use href="#i-tune"/></svg>编辑产品</button>
+    </div>
+  </div>
+
+  <div class="detail-hero card pad">
+    <div class="detail-hero-main">
+      <div class="detail-badges"><span class="detail-stage" id="dStage">灵感</span><span class="detail-prio" id="dPriority">中优先级</span></div>
+      <h1 id="dName">产品名称</h1>
+      <p id="dDesc">一句话定位</p>
+      <div class="detail-meta"><span><svg class="ic sm"><use href="#i-clock"/></svg>最近更新 <b id="dUpdated">—</b></span><span><svg class="ic sm"><use href="#i-hub"/></svg>产品编号 <b class="mono" id="dId">—</b></span></div>
+    </div>
+    <div class="detail-ring" id="dRingWrap">
+      <svg viewBox="0 0 120 120" class="ring"><circle cx="60" cy="60" r="52" class="ring-bg"/><circle cx="60" cy="60" r="52" class="ring-fg" id="dRingFg"/></svg>
+      <div class="ring-label"><b id="dRingPct">0%</b><span>生命周期</span></div>
+    </div>
+  </div>
+
+  <div class="card pad detail-section">
+    <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-route"/></svg>九阶段生命周期进度</div><span class="cap">当前阶段高亮，可点击直接推进</span></div>
+    <div class="detail-stages" id="dStages"></div>
+  </div>
+
+  <div class="card pad detail-section">
+    <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-layers"/></svg>产品档案</div><span class="cap">点击字段可直接编辑</span></div>
+    <div class="detail-fields" id="dFields"></div>
+  </div>
+
+  <div class="card pad detail-section">
+    <div class="mini-head"><div class="t"><svg class="ic sm"><use href="#i-clock"/></svg>产品动态</div><span class="cap">该产品的关键节点记录</span></div>
+    <div class="mini-body" id="dLog"><div class="empty">暂无动态记录</div></div>
+  </div>
+</section>
+
+<!-- ==================== VIEW: AUDIT LOG (secondary page) ==================== -->
+<section class="view" id="view-audit">
+  <div class="detail-top">
+    <button class="btn-line" id="auditBack"><svg class="ic sm"><use href="#i-back"/></svg>返回流水线</button>
+    <button class="btn-line" id="auditExport"><svg class="ic sm"><use href="#i-download"/></svg>导出日志</button>
+  </div>
+  <div class="card vhead">
+    <div class="eyebrow"><span class="tag" style="background:var(--primary-fixed);color:var(--primary)">TRACEABILITY · 全厂动态</span></div>
+    <h1>审计日志与 SOP 流转动态</h1>
+    <p>每一次新建、阶段推进、设置修改与 AI 生成都会留痕。可按类型筛选、搜索，并导出存档。</p>
+  </div>
+  <div class="card audit-tools">
+    <input id="auditSearch" class="kb-search" type="text" placeholder="搜索记录内容、操作人…">
+    <div class="tabs" id="auditTabs"><button class="on" data-kind="">全部</button></div>
+  </div>
+  <div class="card">
+    <div id="auditList" class="audit-list" data-render="audit"></div>
+    <div class="audit-foot"><button class="btn-line" id="auditMore">加载更多</button></div>
   </div>
 </section>
 
@@ -742,17 +1119,19 @@ tr:hover td{background:var(--canvas)}
   </div>
 </section>
 
-<!-- ==================== VIEW 5: KNOWLEDGE & SOP ==================== -->
-<section class="view" id="view-knowledge">
+<!-- ==================== VIEW: KNOWLEDGE BASE ==================== -->
+<section class="view" id="view-kb">
   <div class="card vhead">
-    <div class="eyebrow"><span class="tag" style="background:#f5f3ff;color:#8b5cf6">ENGINEERING · Knowledge Base</span></div>
-    <h1>知识库与标准作业流程</h1>
-    <p>沉淀踩过的坑、验证过的方法和可复用的流程。可全文搜索，可标记掌握程度与使用次数。</p>
+    <div class="eyebrow"><span class="tag" style="background:#f5f3ff;color:#8b5cf6">KNOWLEDGE · 知识库</span></div>
+    <h1>知识库</h1>
+    <p>沉淀踩过的坑、验证过的方法和参考资料。点击任意文字可直接修改，改动自动保存。</p>
     <div class="acts">
-      <button class="btn-ghost" data-add="sop"><svg class="ic sm"><use href="#i-route"/></svg>新增 SOP 流程</button>
+      <button class="btn-ghost" data-ai-gen="kb"><svg class="ic sm"><use href="#i-spark"/></svg>AI 自动生成</button>
       <button class="btn-primary" data-add="kb"><svg class="ic sm"><use href="#i-plus"/></svg>新建知识条目</button>
     </div>
   </div>
+
+  <div class="aigen-hint"><svg class="ic"><use href="#i-spark"/></svg><span><b>让 AI 帮你沉淀：</b>读取当前工作台的产品、卡点、决策、实验与动态，归纳成「踩坑 / 方法 / 规范」类知识条目和可执行的 SOP 草案。先预览、可勾选，确认后才写入，不会覆盖已有内容。</span></div>
 
   <div class="kpis">
     <div class="card kpi"><div class="top"><span class="cap">知识条目</span><span class="ico" style="background:#e2dfff"><svg class="ic sm" style="color:#4f46e5"><use href="#i-book"/></svg></span></div><div class="big" id="kbTotal">0</div><div class="foot"><span class="good" id="kbMastered">0 条已掌握</span><span class="mono">全量沉淀</span></div></div>
@@ -770,22 +1149,276 @@ tr:hover td{background:var(--canvas)}
       </div>
     </div>
     <div class="tabs" id="kbTabs"><button class="on" data-cat="">全部</button></div>
-    <div class="mini-body" data-render="kb" data-empty="还没有知识条目。点右上角「新建知识条目」，把踩过的坑和方法沉淀下来。">
+    <div class="mini-body grid-cards" data-render="kb" data-empty="还没有知识条目。点右上角「新建知识条目」，把踩过的坑和方法沉淀下来。">
       <div class="kb-card"><div class="kb-head"><b>示例</b></div><p>示例</p></div>
     </div>
+  </div>
+</section>
+
+<!-- ==================== VIEW: SOP ==================== -->
+<section class="view" id="view-sop">
+  <div class="card vhead">
+    <div class="eyebrow"><span class="tag" style="background:#dae2fd;color:#565e74">PROCESS · 标准作业流程</span></div>
+    <h1>SOP 标准作业流程</h1>
+    <p>把重复执行的操作固化成可复用步骤，支持负责人、触发条件与逐条步骤。</p>
+    <div class="acts">
+      <button class="btn-ghost" data-ai-gen="sop"><svg class="ic sm"><use href="#i-spark"/></svg>AI 自动生成</button>
+      <button class="btn-primary" data-add="sop"><svg class="ic sm"><use href="#i-plus"/></svg>新增 SOP 流程</button>
+    </div>
+  </div>
+
+  <div class="aigen-hint"><svg class="ic"><use href="#i-spark"/></svg><span><b>让 AI 帮你生成流程：</b>基于当前阶段的产物与历史卡点，自动归纳阶段推进 SOP、上线检查 SOP、每周复盘 SOP。生成后先预览，勾选确认才写入。</span></div>
+
+  <div class="kpis">
+    <div class="card kpi"><div class="top"><span class="cap">流程总数</span><span class="ico" style="background:#dae2fd"><svg class="ic sm" style="color:#565e74"><use href="#i-route"/></svg></span></div><div class="big" id="sopFlowTotal">0</div><div class="foot"><span class="good">已固化</span><span class="mono">标准作业流程</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">步骤总数</span><span class="ico" style="background:#e2dfff"><svg class="ic sm" style="color:#4f46e5"><use href="#i-check"/></svg></span></div><div class="big" id="sopStepTotal">0</div><div class="foot"><span class="good">可执行步骤</span><span class="mono">累计</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">研发交付类</span><span class="ico" style="background:#e6fcf5"><svg class="ic sm" style="color:#087f5b"><use href="#i-code"/></svg></span></div><div class="big" id="sopDev">0</div><div class="foot"><span class="muted">研发 / 发布 / 验收</span><span class="mono">按场景</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">运营增长类</span><span class="ico" style="background:#ecfeff"><svg class="ic sm" style="color:#0891b2"><use href="#i-trend"/></svg></span></div><div class="big" id="sopOps">0</div><div class="foot"><span class="good">运营 / 复盘</span><span class="mono">按场景</span></div></div>
   </div>
 
   <div class="card">
     <div class="mini-head">
-      <div class="t"><svg class="ic sm"><use href="#i-route"/></svg>SOP 标准作业流程</div>
+      <div class="t"><svg class="ic sm"><use href="#i-route"/></svg>SOP 流程列表</div>
       <button class="chipbtn" data-add="sop"><svg class="ic sm"><use href="#i-plus"/></svg>新增流程</button>
     </div>
-    <div class="mini-body" data-render="sops" data-empty="还没有 SOP。点右上角「新增 SOP 流程」，把重复执行的操作固化成可复用步骤。">
+    <div class="mini-body grid-cards" data-render="sops" data-empty="还没有 SOP。点右上角「新增 SOP 流程」，把重复执行的操作固化成可复用步骤。">
       <div class="sop"><div class="sop-head"><b>示例</b></div></div>
     </div>
   </div>
 </section>
 
+<!-- ==================== VIEW: SKILL HUB ==================== -->
+<section class="view" id="view-skill">
+  <div class="card vhead">
+    <div class="eyebrow"><span class="tag" style="background:#e2dfff;color:#4f46e5">CAPABILITY · Skill Hub</span></div>
+    <h1>Skill Hub</h1>
+    <p>沉淀可复用的技能、工具用法与分析模板，记录能力说明与调用方式，供 Agent 按需组合。</p>
+    <div class="acts">
+      <button class="btn-ghost" data-ai-gen="skill"><svg class="ic sm"><use href="#i-spark"/></svg>AI 自动生成</button>
+      <button class="btn-primary" data-add="skill"><svg class="ic sm"><use href="#i-plus"/></svg>新增 Skill</button>
+    </div>
+  </div>
+
+  <div class="aigen-hint"><svg class="ic"><use href="#i-spark"/></svg><span><b>使用建议：</b>把「输入 → 处理 → 输出」写清楚，并加上标签与成熟度。后续 Agent 可以直接引用这些技能作为能力单元。</span></div>
+
+  <div class="kpis">
+    <div class="card kpi"><div class="top"><span class="cap">技能总数</span><span class="ico" style="background:#e2dfff"><svg class="ic sm" style="color:#4f46e5"><use href="#i-spark"/></svg></span></div><div class="big" id="skillTotal">0</div><div class="foot"><span class="good" id="skillReusable">0 个可复用</span><span class="mono">能力资产</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">可复用</span><span class="ico" style="background:#e6fcf5"><svg class="ic sm" style="color:#087f5b"><use href="#i-check"/></svg></span></div><div class="big" id="skillReady">0</div><div class="foot"><span class="good">成熟度达标</span><span class="mono">可直接调用</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">沉淀中</span><span class="ico" style="background:#fff4e6"><svg class="ic sm" style="color:#e8590c"><use href="#i-flask"/></svg></span></div><div class="big" id="skillWip">0</div><div class="foot"><span class="muted">实验中 + 待沉淀</span><span class="mono">持续完善</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">分析技能</span><span class="ico" style="background:#dae2fd"><svg class="ic sm" style="color:#565e74"><use href="#i-chart"/></svg></span></div><div class="big" id="skillAnalysis">0</div><div class="foot"><span class="good">占比 <span id="skillAnalysisPct">0%</span></span><span class="mono">按类型</span></div></div>
+  </div>
+
+  <div class="card">
+    <div class="mini-head">
+      <div class="t"><svg class="ic sm"><use href="#i-spark"/></svg>技能清单</div>
+      <button class="chipbtn" data-add="skill"><svg class="ic sm"><use href="#i-plus"/></svg>新增 Skill</button>
+    </div>
+    <div class="mini-body grid-cards" data-render="skills" data-empty="还没有 Skill。把可复用的能力（工具用法、分析方法、模板）沉淀到这里，供 Agent 调用。">
+      <div class="kb-card"><div class="kb-head"><b>示例</b></div><p>示例</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== VIEW: AGENT HUB ==================== -->
+<section class="view" id="view-agent">
+  <div class="card vhead">
+    <div class="eyebrow"><span class="tag" style="background:#eef2ff;color:#4f46e5">INTELLIGENCE · Agent Hub</span></div>
+    <h1>Agent Hub</h1>
+    <p>登记你搭建的智能体：负责什么场景、由什么模型驱动、如何触发、能力边界在哪里。</p>
+    <div class="acts">
+      <button class="btn-ghost" data-ai-gen="agent"><svg class="ic sm"><use href="#i-spark"/></svg>AI 自动生成</button>
+      <button class="btn-primary" data-add="agent"><svg class="ic sm"><use href="#i-plus"/></svg>新增 Agent</button>
+    </div>
+  </div>
+
+  <div class="aigen-hint"><svg class="ic"><use href="#i-hub"/></svg><span><b>使用建议：</b>为每个 Agent 写清「能做什么 / 不能做什么 / 需要哪些上下文」，并标注状态（规划中 / 可用 / 已下线），方便后续编排。</span></div>
+
+  <div class="kpis">
+    <div class="card kpi"><div class="top"><span class="cap">智能体总数</span><span class="ico" style="background:#eef2ff"><svg class="ic sm" style="color:#4f46e5"><use href="#i-hub"/></svg></span></div><div class="big" id="agentTotal">0</div><div class="foot"><span class="good">已登记</span><span class="mono">能力执行体</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">可用</span><span class="ico" style="background:#e6fcf5"><svg class="ic sm" style="color:#087f5b"><use href="#i-check"/></svg></span></div><div class="big" id="agentReady">0</div><div class="foot"><span class="good">状态可用</span><span class="mono">可直接运行</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">规划中</span><span class="ico" style="background:#fff4e6"><svg class="ic sm" style="color:#e8590c"><use href="#i-clock"/></svg></span></div><div class="big" id="agentPlanned">0</div><div class="foot"><span class="muted">待搭建</span><span class="mono">按状态</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">产品类</span><span class="ico" style="background:#dae2fd"><svg class="ic sm" style="color:#565e74"><use href="#i-bulb"/></svg></span></div><div class="big" id="agentProduct">0</div><div class="foot"><span class="good">占比 <span id="agentProductPct">0%</span></span><span class="mono">按场景</span></div></div>
+  </div>
+
+  <div class="card">
+    <div class="mini-head">
+      <div class="t"><svg class="ic sm"><use href="#i-hub"/></svg>智能体清单</div>
+      <button class="chipbtn" data-add="agent"><svg class="ic sm"><use href="#i-plus"/></svg>新增 Agent</button>
+    </div>
+    <div class="mini-body grid-cards" data-render="agents" data-empty="还没有 Agent。登记你的智能体：负责什么、由什么模型驱动、如何触发、能力边界在哪里。">
+      <div class="kb-card"><div class="kb-head"><b>示例</b></div><p>示例</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== VIEW: RULE HUB ==================== -->
+<section class="view" id="view-rule">
+  <div class="card vhead">
+    <div class="eyebrow"><span class="tag" style="background:#e6fcf5;color:#087f5b">GOVERNANCE · Rule Hub</span></div>
+    <h1>Rule Hub</h1>
+    <p>把硬约束、偏好口径与安全边界写在这里，让知识、SOP 与 Agent 执行时保持一致。</p>
+    <div class="acts">
+      <button class="btn-ghost" data-ai-gen="rule"><svg class="ic sm"><use href="#i-spark"/></svg>AI 自动生成</button>
+      <button class="btn-primary" data-add="rule"><svg class="ic sm"><use href="#i-plus"/></svg>新增规则</button>
+    </div>
+  </div>
+
+  <div class="aigen-hint"><svg class="ic"><use href="#i-shield"/></svg><span><b>使用建议：</b>高优先级规则要写清判定标准与例外情况；草稿状态的规则不会被执行，确认后再改为生效中。</span></div>
+
+  <div class="kpis">
+    <div class="card kpi"><div class="top"><span class="cap">规则总数</span><span class="ico" style="background:#e6fcf5"><svg class="ic sm" style="color:#087f5b"><use href="#i-shield"/></svg></span></div><div class="big" id="ruleTotal">0</div><div class="foot"><span class="good">已登记</span><span class="mono">治理口径</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">生效中</span><span class="ico" style="background:#d3f9d8"><svg class="ic sm" style="color:#2b8a3e"><use href="#i-check"/></svg></span></div><div class="big" id="ruleActive">0</div><div class="foot"><span class="good">正在驱动行为</span><span class="mono">按状态</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">硬约束·边界</span><span class="ico" style="background:#ffe3e3"><svg class="ic sm" style="color:#c92a2a"><use href="#i-warn"/></svg></span></div><div class="big" id="ruleHard">0</div><div class="foot"><span class="muted">红线类</span><span class="mono">按类型</span></div></div>
+    <div class="card kpi"><div class="top"><span class="cap">高优先级</span><span class="ico" style="background:#fff4e6"><svg class="ic sm" style="color:#e8590c"><use href="#i-flag"/></svg></span></div><div class="big" id="ruleHigh">0</div><div class="foot"><span class="good">占比 <span id="ruleHighPct">0%</span></span><span class="mono">按优先级</span></div></div>
+  </div>
+
+  <div class="card">
+    <div class="mini-head">
+      <div class="t"><svg class="ic sm"><use href="#i-shield"/></svg>规则清单</div>
+      <button class="chipbtn" data-add="rule"><svg class="ic sm"><use href="#i-plus"/></svg>新增规则</button>
+    </div>
+    <div class="mini-body grid-cards" data-render="rules" data-empty="还没有规则。把硬约束、偏好口径与安全边界写在这里，让 Agent 执行时保持一致。">
+      <div class="kb-card"><div class="kb-head"><b>示例</b></div><p>示例</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== VIEW: SEARCH ==================== -->
+<section class="view" id="view-search">
+  <div class="card vhead">
+    <div class="eyebrow"><span class="tag" style="background:var(--primary-fixed);color:var(--primary)">SEARCH · 全局搜索</span></div>
+    <h1>搜索</h1>
+    <p>一次搜索产品、灵感、决策、指标、知识条目与审计日志。最近搜索会保存在工作台数据里，换浏览器也能看到。</p>
+  </div>
+
+  <div class="card">
+    <div class="search-block">
+      <div class="search-main">
+        <div class="search-field">
+          <svg class="ic sm"><use href="#i-search"/></svg>
+          <input id="searchInput" type="search" placeholder="输入关键词，按回车搜索…" autocomplete="off">
+        </div>
+        <button type="button" class="btn-primary" id="searchGo">搜索</button>
+      </div>
+    </div>
+
+    <div class="search-block">
+      <div class="search-block-hd">
+        <div class="t"><svg class="ic sm"><use href="#i-clock"/></svg>最近搜索</div>
+        <button type="button" class="search-text-btn" id="recentClear">清空记录</button>
+      </div>
+      <div class="recent-list" id="recentList"></div>
+      <div class="search-hint" id="recentEmpty" style="margin-top:4px">还没有搜索记录。搜索一次后，关键词会出现在这里。</div>
+    </div>
+
+    <div class="search-block" id="resultBlock" style="display:none">
+      <div class="search-block-hd">
+        <div class="t"><svg class="ic sm"><use href="#i-radar"/></svg>搜索结果</div>
+        <span class="cap" id="searchCount">0 条</span>
+      </div>
+      <div id="searchResults"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== VIEW 6: SETTINGS ==================== -->
+<section class="view" id="view-settings">
+  <div class="card vhead">
+    <div class="eyebrow"><span class="tag" style="background:var(--primary-fixed);color:var(--primary)">PREFERENCES · 工作台设置</span></div>
+    <h1>设置</h1>
+    <p>管理你的名字、外观主题与本地数据。所有改动都会自动保存，无需手动提交。</p>
+  </div>
+
+  <div class="card set-shell">
+    <nav class="set-nav" id="setNav">
+      <button type="button" class="set-tab on" data-tab="profile"><svg class="ic"><use href="#i-user"/></svg><span><b>个人资料</b><small>名字与头像</small></span></button>
+      <button type="button" class="set-tab" data-tab="theme"><svg class="ic"><use href="#i-palette"/></svg><span><b>外观主题</b><small>白天 / 深夜</small></span></button>
+      <button type="button" class="set-tab" data-tab="ai"><svg class="ic"><use href="#i-cpu"/></svg><span><b>AI 引擎</b><small>WorkBuddy / 模型</small></span></button>
+      <button type="button" class="set-tab" data-tab="data"><svg class="ic"><use href="#i-layers"/></svg><span><b>数据与备份</b><small>导入导出 / 重置</small></span></button>
+      <button type="button" class="set-tab" data-tab="help"><svg class="ic"><use href="#i-help"/></svg><span><b>使用帮助</b><small>常见问题</small></span></button>
+      <button type="button" class="set-tab" data-tab="about"><svg class="ic"><use href="#i-info"/></svg><span><b>关于</b><small>版本信息</small></span></button>
+    </nav>
+
+    <div class="set-panels">
+      <div class="set-panel on" id="setProfile">
+        <div class="set-hd"><span class="set-ico"><svg class="ic"><use href="#i-user"/></svg></span><div><div class="h3">个人资料</div><p>这个名字会显示在左下角、审计日志和新建记录中。</p></div></div>
+        <div class="set-row">
+          <div class="set-avatar" id="setAvatar" style="background:#3525cd">我</div>
+          <div class="set-field"><label for="setName">显示名称</label><input id="setName" type="text" maxlength="24" placeholder="输入你的名字" autocomplete="off"></div>
+        </div>
+        <div class="set-actions"><button class="btn-primary" id="setNameSave"><svg class="ic sm"><use href="#i-check"/></svg>保存名字</button><span class="set-note" id="setNameTip">也可以直接点击左下角的名字修改</span></div>
+      </div>
+
+      <div class="set-panel" id="setTheme">
+        <div class="set-hd"><span class="set-ico"><svg class="ic"><use href="#i-palette"/></svg></span><div><div class="h3">外观主题</div><p>白天模式清爽专注，深夜模式降低亮度，设置会一直保留。</p></div></div>
+        <div class="set-row" style="gap:10px">
+          <button type="button" class="theme-opt" id="themeLight" data-theme="light"><span class="tic light"><svg class="ic lg"><use href="#i-sun"/></svg></span><span><b>白天模式</b><small>Light · 默认</small></span><svg class="ic pick"><use href="#i-check"/></svg></button>
+          <button type="button" class="theme-opt" id="themeDark" data-theme="dark"><span class="tic dark"><svg class="ic lg"><use href="#i-moon"/></svg></span><span><b>深夜模式</b><small>Dark · 低亮度</small></span><svg class="ic pick"><use href="#i-check"/></svg></button>
+        </div>
+      </div>
+
+      <div class="set-panel" id="setAi">
+        <div class="set-hd"><span class="set-ico"><svg class="ic"><use href="#i-cpu"/></svg></span><div><div class="h3">AI 引擎 · Agent 执行后端</div><p>决定三个 Hub 里的 Agent 由谁来真正推理执行。密钥只保存在本机，不写入 data.json、不随备份导出。</p></div></div>
+        <div class="eng-status" id="engStatus">
+          <span class="es-ico" id="engIco"><svg><use href="#i-hub"/></svg></span>
+          <div style="min-width:0;flex:1"><b id="engTitle">正在检测执行后端…</b><p id="engDesc">读取本地引擎配置中</p></div>
+        </div>
+        <div class="eng-note"><b>当前工作方式：</b>不填密钥也能用——在 Agent Hub 点任意 Agent 的「运行」，选择 <b>WorkBuddy 原生执行</b>，系统会生成一份结构化任务简报，你复制到 WorkBuddy 对话即可让它按这个 Agent 的设定真正推理。想让工作台自己直接跑模型时，在下面填入 API Key 即可切换到服务端真推理。</div>
+        <div class="eng-preset" id="engPreset">
+          <button type="button" data-provider="deepseek" class="on">DeepSeek</button>
+          <button type="button" data-provider="openai">OpenAI</button>
+          <button type="button" data-provider="custom">自定义 / 兼容接口</button>
+        </div>
+        <div class="eng-form">
+          <div class="full"><label for="engBaseUrl">接口地址 Base URL</label><input id="engBaseUrl" type="text" autocomplete="off" placeholder="https://api.deepseek.com/v1"></div>
+          <div class="full"><label for="engModel">模型名称 Model</label><input id="engModel" type="text" autocomplete="off" placeholder="deepseek-chat"></div>
+          <div class="full"><label for="engKey">API Key（留空表示保留已保存的密钥）</label><input id="engKey" type="password" autocomplete="off" placeholder="sk-…"></div>
+        </div>
+        <div class="set-actions"><button class="btn-primary" id="engSave"><svg class="ic sm"><use href="#i-check"/></svg>保存引擎配置</button><button class="btn-line" id="engTest"><svg class="ic sm"><use href="#i-spark"/></svg>测试连接</button><span class="set-note" id="engTip">密钥存于 ai_config.json，仅本机可见</span></div>
+      </div>
+
+      <div class="set-panel" id="setData">
+        <div class="set-hd"><span class="set-ico"><svg class="ic"><use href="#i-layers"/></svg></span><div><div class="h3">数据存储与备份</div><p>数据保存在本项目的 data.json，同一局域网内其它浏览器打开也能看到。</p></div></div>
+        <div class="set-btns">
+          <button class="btn-primary" id="exportBtn"><svg class="ic sm"><use href="#i-download"/></svg>导出备份</button>
+          <button class="btn-line" id="importBtn"><svg class="ic sm"><use href="#i-upload"/></svg>导入备份</button>
+          <input type="file" id="importFile" accept="application/json,.json" style="display:none">
+        </div>
+        <div style="margin-top:16px">
+          <div class="set-stat"><span>存储方式</span><b id="setStorageMode">正在检测…</b></div>
+          <div class="set-stat"><span>产品 / 灵感 / 知识条目</span><b id="setStatCounts">0 / 0 / 0</b></div>
+          <div class="set-stat"><span>最后保存时间</span><b id="setUpdated">—</b></div>
+        </div>
+        <div class="danger-zone">
+          <button class="btn-line" id="resetBtn" style="color:var(--rose);border-color:var(--border)"><svg class="ic sm"><use href="#i-trash"/></svg>重置全部数据</button>
+          <div class="set-note" style="margin-top:7px">会清空所有产品、灵感、知识内容和填写的文字，操作前建议先导出备份。</div>
+        </div>
+      </div>
+
+      <div class="set-panel" id="setHelp">
+        <div class="set-hd"><span class="set-ico"><svg class="ic"><use href="#i-help"/></svg></span><div><div class="h3">使用帮助</div><p>常见问题与快捷操作，点击查看解答。</p></div></div>
+        <div class="help-list">
+          <details open><summary>怎么录入内容？</summary><div class="help-body">页面上任意文字都可以直接点击修改，改动会实时保存；带虚线或「待填写」标记的位置是留给你填写的空白区域。</div></details>
+          <details><summary>怎么新建和管理产品？</summary><div class="help-body">点击右上角「新建产品/灵感」创建卡片；在「流水线看板」里通过卡片上的阶段下拉框切换阶段，点击卡片进入产品详情页查看 9 阶段进度、字段与流转记录。侧边栏「产品矩阵」点击产品也会进入详情页。</div></details>
+          <details><summary>九阶段分别是什么？</summary><div class="help-body">灵感 → 产品规划 → 战略决策 → 产品设计 → 产品开发 → 产品落地 → 产品上线 → 推广运营 → 动态调整。每张产品卡片都在这些阶段之间流转，详情页的进度环按当前阶段自动计算。</div></details>
+          <details><summary>数据会丢吗？存在哪里？</summary><div class="help-body">数据写入项目目录下的 <code>data.json</code>，由本地服务负责保存；浏览器里也保留一份缓存作降级。关闭浏览器、重启服务后数据仍在。如果本地服务未启动而用文件方式打开，则退化为浏览器本地存储（仅当前浏览器可见）。</div></details>
+          <details><summary>怎么换浏览器也能看到数据？</summary><div class="help-body">保持本地服务运行（双击「启动工作台.command」），其它浏览器访问同一个 <code>http://127.0.0.1:8210/index.html</code> 地址即可读取同一份 data.json。</div></details>
+          <details><summary>备份与重置怎么做？</summary><div class="help-body">在「数据与备份」标签里点「导出备份」可下载完整 JSON；「导入备份」会用备份覆盖当前数据；「重置全部数据」会清空所有内容，操作前请先导出。</div></details>
+          <details><summary>审计日志在哪里看？</summary><div class="help-body">主流水线底部的「全工厂审计日志与 SOP 流转动态」只展示最近 3 条摘要，点「查看全部」进入二级页面，可按类型筛选、搜索并导出日志。新建产品、阶段推进、设置修改与 AI 生成都会记录进去。</div></details>
+          <details><summary>知识库和 SOP 怎么让 AI 自动生成？</summary><div class="help-body">在侧边栏「Agent 能力中心」进入「知识库」或「SOP 流程」，点「AI 自动生成」，选择知识条目 / SOP、范围（全工作台或单个产品）后先生成预览，勾选确认后写入。默认使用本地归纳引擎，离线可用；如需接入大模型，在本机启动服务前设置环境变量 <code>PF_AI_API_KEY</code>（可选 <code>PF_AI_BASE_URL</code>、<code>PF_AI_MODEL</code>），服务端会优先调用模型，失败时自动回退本地生成。密钥只留在本地服务，不会写入 data.json。</div></details>
+          <details><summary>三个 Hub 是做什么的？</summary><div class="help-body">侧边栏「Agent 能力中心」下有 5 个独立入口：知识库、SOP 流程、Skill Hub、Agent Hub、Rule Hub，点击即可来回切换。Skill Hub 沉淀可复用技能与调用方式，Agent Hub 登记智能体的职责、模型、触发方式与边界，Rule Hub 记录硬约束、口径与安全边界。它们都能新建、编辑、删除，数据同样存在 data.json。</div></details>
+          <details><summary>Agent 怎么真正执行任务（不配大模型也能用）？</summary><div class="help-body">在 Agent Hub 里点任意 Agent 卡片上的「运行」按钮，会打开执行弹窗，默认使用 <b>WorkBuddy 原生执行</b>：填好任务后点「生成执行简报」，系统会结合该 Agent 的角色/边界、生效中的规则、已登记的技能与工作台数据生成一份结构化简报，点「复制简报」粘贴到 WorkBuddy 对话即可让它真正推理执行，也可下载成 .md。这条路径不需要任何 API Key。<b>想让工作台自己直接调用模型</b>时，到「设置 → AI 引擎」填入 API Key（内置 DeepSeek 预设，也支持 OpenAI 及任意兼容接口），密钥保存在项目内 <code>ai_config.json</code>、不写入 data.json、不随备份导出；保存后回到运行弹窗切到「服务端模型推理」即可，结果可一键写入知识库。此前用环境变量 <code>PF_AI_*</code> 配置的方式仍然兼容且优先级最高。</div></details>
+          <details><summary>快捷键</summary><div class="help-body"><code>⌘K / Ctrl+K</code> 打开右上角搜索页；<code>Esc</code> 关闭弹窗。</div></details>
+        </div>
+      </div>
+
+      <div class="set-panel" id="setAbout">
+        <div class="set-hd"><span class="set-ico"><svg class="ic"><use href="#i-info"/></svg></span><div><div class="h3">关于</div><p>ProductForge · 产品工厂全生命周期协同工作台</p></div></div>
+        <div class="set-note">版本 v3 · 本地离线优先 · 九阶段产品生命周期 · 数据存于本机，不上传任何第三方服务。</div>
+      </div>
+    </div>
+  </div>
+</section>
 
 </main>
 
@@ -809,6 +1442,88 @@ tr:hover td{background:var(--canvas)}
   <form id="rform"><div class="mb"><div class="grid2" id="rFields"></div></div>
   <div class="mf"><button type="button" class="btn-line" id="rDeleteBtn" style="margin-right:auto;color:#c92a2a;border-color:#ffc9c9">删除</button><button type="button" class="btn-line" id="rCancelBtn">取消</button><button type="submit" class="btn-primary" id="rSubmitBtn">保存</button></div>
   </form>
+</div></div>
+
+<!-- AI 自动生成弹窗 -->
+<div class="mask" id="aiMask"><div class="modal" role="dialog" aria-modal="true">
+  <div class="mh"><h2>AI 自动生成 · 知识与 Agent 能力</h2><button class="x" id="aiClose" aria-label="关闭">×</button></div>
+  <div class="mb">
+    <div class="ai-opt-grid">
+      <label class="ai-opt-card on" id="aiKbCard"><input type="checkbox" id="aiKb" checked><span><b>知识条目</b><small>从产品、卡点、决策、实验中归纳踩坑与方法</small></span></label>
+      <label class="ai-opt-card on" id="aiSopCard"><input type="checkbox" id="aiSop" checked><span><b>SOP 流程</b><small>生成九阶段推进、上线检查与复盘流程</small></span></label>
+      <label class="ai-opt-card on" id="aiSkillCard"><input type="checkbox" id="aiSkill" checked><span><b>Skill 技能</b><small>沉淀可复用能力，供 Agent 调用</small></span></label>
+      <label class="ai-opt-card on" id="aiAgentCard"><input type="checkbox" id="aiAgent" checked><span><b>Agent 智能体</b><small>登记执行体：场景、模型、触发与边界</small></span></label>
+      <label class="ai-opt-card on" id="aiRuleCard"><input type="checkbox" id="aiRule" checked><span><b>Rule 规则</b><small>固化硬约束、审批要求与偏好口径</small></span></label>
+    </div>
+    <div class="ai-scope-row">
+      <span>生成范围：</span>
+      <label><input type="radio" name="aiScope" value="all" checked>全工作台</label>
+      <label><input type="radio" name="aiScope" value="product">指定产品</label>
+      <select id="aiProduct" disabled><option value="">选择产品</option></select>
+    </div>
+    <div class="ai-status" id="aiStatus">基于当前工作台数据生成草案，结果可勾选后写入。</div>
+    <div class="ai-preview" id="aiPreview"><div class="ai-empty">点击「生成预览」查看 AI 建议。</div></div>
+  </div>
+  <div class="mf"><button type="button" class="btn-line" id="aiCancel">取消</button><button type="button" class="btn-line" id="aiPreviewBtn"><svg class="ic sm"><use href="#i-spark"/></svg>生成预览</button><button type="button" class="btn-primary" id="aiCommit" disabled>写入工作台</button></div>
+</div></div>
+
+<!-- L3: Agent 执行弹窗（双后端：WorkBuddy 桥接 / 服务端模型真推理） -->
+<div class="mask" id="runMask"><div class="modal modal-run" role="dialog" aria-modal="true">
+  <div class="mh"><h2>运行 Agent · 真推理</h2><button class="x" id="runClose" aria-label="关闭">×</button></div>
+  <div class="mb">
+    <div class="run-hero">
+      <span class="rh-ico"><svg><use href="#i-hub"/></svg></span>
+      <div style="min-width:0"><h3 id="runAgentTitle">智能体</h3><p id="runAgentMeta">场景 · 触发方式</p></div>
+    </div>
+    <div class="run-mode" id="runMode">
+      <button type="button" class="on" data-mode="workbuddy">
+        <b><svg><use href="#i-hub"/></svg>WorkBuddy 原生执行 <span class="rec-chip" id="wbChip">无需配置</span></b>
+        <small>生成结构化任务简报，复制到 WorkBuddy 对话即可真正推理执行。现在就能用，不花钱、不填 Key。</small>
+      </button>
+      <button type="button" data-mode="model">
+        <b><svg><use href="#i-cpu"/></svg>服务端模型推理 <span class="rec-chip off" id="mdChip">未配置</span></b>
+        <small>工作台直接调用 DeepSeek 等模型执行，结果可写入知识库。需在「设置 → AI 引擎」填入 API Key。</small>
+      </button>
+    </div>
+    <div class="run-field">
+      <label for="runTask">本次任务 / 输入</label>
+      <textarea id="runTask" placeholder="描述你想让这个 Agent 做什么，例如：评估「赛博小镇」这个灵感是否值得立项，并给出 RICE 打分"></textarea>
+    </div>
+    <div class="ai-scope-row">
+      <span>数据范围：</span>
+      <label><input type="radio" name="runScope" value="all" checked>全工作台</label>
+      <label><input type="radio" name="runScope" value="product">指定产品</label>
+      <select id="runProduct" disabled><option value="">选择产品</option></select>
+    </div>
+
+    <div id="runPaneWorkbuddy">
+      <div class="run-msg info show" id="wbHint">点「生成执行简报」后，复制整段内容粘贴到 WorkBuddy 对话，它就会按本 Agent 的角色、边界和工作台数据来执行。</div>
+      <div class="run-out-wrap"><textarea class="run-out" id="runBrief" readonly placeholder="执行简报会显示在这里…"></textarea></div>
+    </div>
+
+    <div id="runPaneModel" style="display:none">
+      <div class="run-msg warn" id="mdNoKey">尚未配置模型密钥。请到「设置 → AI 引擎」填入 API Key；在此之前可用 WorkBuddy 原生执行。</div>
+      <div class="run-result" id="runResult"></div>
+    </div>
+  </div>
+  <div class="mf" id="runFooter">
+    <button type="button" class="btn-line" id="runCancel">取消</button>
+    <button type="button" class="btn-line" id="runCopy" style="display:none"><svg class="ic sm"><use href="#i-copy"/></svg>复制简报</button>
+    <button type="button" class="btn-line" id="runDownload" style="display:none"><svg class="ic sm"><use href="#i-download"/></svg>下载 .md</button>
+    <button type="button" class="btn-primary" id="runGo"><svg class="ic sm"><use href="#i-spark"/></svg>生成执行简报</button>
+    <button type="button" class="btn-primary" id="runSaveKb" style="display:none">写入知识库</button>
+  </div>
+</div></div>
+
+<!-- 规则拦截弹窗 -->
+<div class="mask" id="ruleBlockMask"><div class="modal modal-sm" role="alertdialog" aria-modal="true">
+  <div class="mh"><h2 id="rblkTitle">规则拦截 · 阶段推进未允许</h2><button class="x" id="rblkClose" aria-label="关闭">×</button></div>
+  <div class="mb">
+    <div class="rblk-icon"><svg class="ic lg"><use href="#i-shield"/></svg></div>
+    <div class="rblk-body" id="rblkBody"></div>
+    <div class="rblk-tip" id="rblkTip"></div>
+  </div>
+  <div class="mf"><button type="button" class="btn-primary" id="rblkOk">我知道了</button></div>
 </div></div>
 
 <div class="toast" id="toast"></div>
