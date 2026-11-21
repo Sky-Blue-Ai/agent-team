@@ -2,3 +2,7 @@
 *.genie
 .backup-*/
 node_modules/
+__pycache__/
+*.pyc
+# 模型密钥绝不入库（data.json 按用户要求提交，但密钥单独存放）
+ai_config.json
